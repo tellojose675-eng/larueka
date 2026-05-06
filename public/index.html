@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- 🔥 IMPORTANTE para celular -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Tienda de Ropa</title>
+
+  <!-- Fuente moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #fafafa;
+      color: #222;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      background: white;
+      border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
+    }
+
+    header h1 {
+      font-weight: 600;
+      font-size: 22px;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      margin-left: 20px;
+      text-decoration: none;
+      color: #555;
+      font-size: 14px;
+    }
+
+    nav a:hover {
+      color: black;
+    }
+
+    /* 🔥 GRID RESPONSIVE */
+    .container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: 0.3s;
+      border: 1px solid #eee;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    /* 🔥 IMÁGENES PERFECTAS */
+    img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
+
+    .info {
+      padding: 15px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    p {
+      margin: 5px 0;
+      font-weight: 600;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      border: none;
+      background: black;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #333;
+    }
+
+    /* 📱 AJUSTES PARA CELULAR */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      nav {
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      nav a {
+        margin: 5px 10px;
+      }
+
+      .container {
+        grid-template-columns: 1fr;
+      }
+
+      img {
+        height: 180px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>TIENDA</h1>
+  <nav>
+    <a href="#">Inicio</a>
+    <a href="#">Hombres</a>
+    <a href="#">Mujeres</a>
+    <a href="#">Contacto</a>
+  </nav>
+</header>
+
+<div class="container" id="products"></div>
+
+<script>
+const API = "http://localhost:3000/products";
+
+fetch(API)
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("products");
+
+    data.forEach(product => {
+      container.innerHTML += `
+        <div class="card">
+          <img src="${product.image}" loading="lazy">
+          <div class="info">
+            <h3>${product.name}</h3>
+            <p>S/. ${product.price}</p>
+            <button onclick="buy('${product.name}')">Comprar</button>
+          </div>
+        </div>
+      `;
+    });
+  });
+
+function buy(name) {
+  alert("Compraste: " + name);
+}
+</script>
+
+</body>
+</html>
