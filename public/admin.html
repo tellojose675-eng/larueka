@@ -2,14 +2,18 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Admin - Gestión de Productos</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
-    rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
 
   <style>
+
     :root {
       --primary: #000000;
       --primary-hover: #333333;
@@ -90,6 +94,7 @@
     td {
       padding: 15px;
       border-bottom: 1px solid var(--border);
+      text-align: left;
     }
 
     .product-img {
@@ -106,6 +111,7 @@
       display: none;
       justify-content: center;
       align-items: center;
+      z-index: 999;
     }
 
     .modal-overlay.active {
@@ -124,7 +130,8 @@
       margin-bottom: 1rem;
     }
 
-    input {
+    input,
+    select {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--border);
@@ -143,6 +150,23 @@
       justify-content: center;
       padding: 2rem;
     }
+
+    @media(max-width:768px){
+
+      table{
+        font-size:14px;
+      }
+
+      th,td{
+        padding:10px;
+      }
+
+      button{
+        padding:10px 14px;
+      }
+
+    }
+
   </style>
 </head>
 
@@ -150,58 +174,114 @@
 
   <header>
     <h2>Panel Admin</h2>
-    <a href="/">Ver tienda</a>
+
+    <a href="/">
+      Ver tienda
+    </a>
   </header>
 
   <!-- LOGIN -->
-  <div id="login-overlay"
-    style="position:fixed; inset:0; background:white; display:flex; justify-content:center; align-items:center; z-index:1000;">
 
-    <div style="width:100%; max-width:400px; padding:2rem;">
-      <h2 style="margin-bottom:20px;">Acceso Administrador</h2>
+  <div
+    id="login-overlay"
+    style="
+      position:fixed;
+      inset:0;
+      background:white;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:1000;
+    "
+  >
+
+    <div
+      style="
+        width:100%;
+        max-width:400px;
+        padding:2rem;
+      "
+    >
+
+      <h2 style="margin-bottom:20px;">
+        Acceso Administrador
+      </h2>
 
       <form id="login-form">
 
         <div class="form-group">
+
           <label>Contraseña</label>
-          <input type="password" id="admin-password" required>
+
+          <input
+            type="password"
+            id="admin-password"
+            required
+          >
+
         </div>
 
-        <button type="submit" class="btn-primary" style="width:100%;">
+        <button
+          type="submit"
+          class="btn-primary"
+          style="width:100%;"
+        >
           Ingresar
         </button>
 
-        <p id="login-error"
-          style="color:red; margin-top:10px; display:none;">
+        <p
+          id="login-error"
+          style="
+            color:red;
+            margin-top:10px;
+            display:none;
+          "
+        >
           Contraseña incorrecta
         </p>
 
       </form>
+
     </div>
 
   </div>
 
   <!-- CONTENIDO -->
-  <div class="container" id="admin-content" style="display:none;">
+
+  <div
+    class="container"
+    id="admin-content"
+    style="display:none;"
+  >
 
     <div class="actions">
-      <button class="btn-primary" onclick="openModal()">
+
+      <button
+        class="btn-primary"
+        onclick="openModal()"
+      >
         + Agregar Producto
       </button>
+
     </div>
 
     <table>
+
       <thead>
+
         <tr>
           <th>ID</th>
           <th>Imagen</th>
           <th>Nombre</th>
           <th>Precio</th>
+          <th>Categoría</th>
           <th>Acciones</th>
         </tr>
+
       </thead>
 
       <tbody id="product-tbody"></tbody>
+
     </table>
 
     <div id="loader" class="loader">
@@ -211,43 +291,97 @@
   </div>
 
   <!-- MODAL -->
+
   <div class="modal-overlay" id="product-modal">
 
     <div class="modal">
 
-      <h2 id="modal-title">Agregar Producto</h2>
+      <h2 id="modal-title">
+        Agregar Producto
+      </h2>
 
       <form id="product-form">
 
-        <input type="hidden" id="product-id">
+        <input
+          type="hidden"
+          id="product-id"
+        >
 
         <div class="form-group">
+
           <label>Nombre</label>
-          <input type="text" id="name" required>
+
+          <input
+            type="text"
+            id="name"
+            required
+          >
+
         </div>
 
         <div class="form-group">
+
           <label>Precio</label>
-          <input type="number" id="price" step="0.01" required>
+
+          <input
+            type="number"
+            id="price"
+            step="0.01"
+            required
+          >
+
         </div>
 
         <div class="form-group">
+
+          <label>Categoría</label>
+
+          <select id="category" required>
+
+            <option value="">
+              Seleccionar
+            </option>
+
+            <option value="hombre">
+              Hombre
+            </option>
+
+            <option value="mujer">
+              Mujer
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="form-group">
+
           <label>Imagen</label>
+
           <input
             type="file"
             id="image"
             accept="image/*"
           >
+
         </div>
 
         <div class="modal-footer">
-          <button type="button" onclick="closeModal()">
+
+          <button
+            type="button"
+            onclick="closeModal()"
+          >
             Cancelar
           </button>
 
-          <button type="submit" class="btn-primary">
+          <button
+            type="submit"
+            class="btn-primary"
+          >
             Guardar
           </button>
+
         </div>
 
       </form>
@@ -302,6 +436,7 @@
             .style.display = "block";
 
         }
+
       };
 
     // CARGAR PRODUCTOS
@@ -329,9 +464,10 @@
         loader.style.display = "none";
 
       }
+
     }
 
-    // RENDER
+    // MOSTRAR PRODUCTOS
 
     function renderProducts() {
 
@@ -340,20 +476,29 @@
       products.forEach(p => {
 
         tbody.innerHTML += `
+
           <tr>
 
             <td>${p.id}</td>
 
             <td>
+
               <img
                 src="${p.image}"
                 class="product-img"
               >
+
             </td>
 
             <td>${p.name}</td>
 
-            <td>S/. ${parseFloat(p.price).toFixed(2)}</td>
+            <td>
+              S/. ${parseFloat(p.price).toFixed(2)}
+            </td>
+
+            <td>
+              ${p.category || "-"}
+            </td>
 
             <td>
 
@@ -374,11 +519,14 @@
             </td>
 
           </tr>
+
         `;
+
       });
+
     }
 
-    // MODAL
+    // ABRIR MODAL
 
     function openModal() {
 
@@ -386,12 +534,19 @@
 
       document.getElementById("product-id").value = "";
 
+      document.getElementById("modal-title").innerText =
+        "Agregar Producto";
+
       modal.classList.add("active");
+
     }
+
+    // CERRAR MODAL
 
     function closeModal() {
 
       modal.classList.remove("active");
+
     }
 
     // EDITAR
@@ -403,6 +558,9 @@
 
       if (!product) return;
 
+      document.getElementById("modal-title").innerText =
+        "Editar Producto";
+
       document.getElementById("product-id").value =
         product.id;
 
@@ -412,7 +570,11 @@
       document.getElementById("price").value =
         product.price;
 
+      document.getElementById("category").value =
+        product.category || "";
+
       modal.classList.add("active");
+
     }
 
     // ELIMINAR
@@ -434,9 +596,10 @@
         console.error(error);
 
       }
+
     }
 
-    // GUARDAR
+    // GUARDAR PRODUCTO
 
     form.onsubmit = async (e) => {
 
@@ -457,6 +620,11 @@
         document.getElementById("price").value
       );
 
+      formData.append(
+        "category",
+        document.getElementById("category").value
+      );
+
       const imageInput =
         document.getElementById("image");
 
@@ -466,19 +634,23 @@
           "image",
           imageInput.files[0]
         );
+
       }
 
       try {
 
         const response =
           await fetch(
+
             id
               ? `${API_URL}/${id}`
               : API_URL,
+
             {
               method: id ? "PUT" : "POST",
               body: formData
             }
+
           );
 
         if (response.ok) {
@@ -489,7 +661,10 @@
 
         } else {
 
-          alert("Error al guardar");
+          const data =
+            await response.json();
+
+          alert(data.error || "Error al guardar");
 
         }
 
@@ -498,6 +673,7 @@
         console.error(error);
 
       }
+
     };
 
   </script>

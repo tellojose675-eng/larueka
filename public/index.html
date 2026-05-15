@@ -393,17 +393,82 @@
     <span class="logo-slogan">ROPA INTERIOR PARA TODA LA FAMILIA</span>
   </h1>
   <nav>
-    <a href="#">Inicio</a>
-    <a href="#">Hombres</a>
-    <a href="#">Mujeres</a>
-    <a href="/admin" title="Panel Administrativo" style="display: flex; align-items: center; color: #6366f1;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-    </a>
-    <div class="cart-icon-container" onclick="toggleCart()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-      <span class="cart-badge" id="cart-count">0</span>
-    </div>
-  </nav>
+
+  <a href="/">
+    Inicio
+  </a>
+
+  <a href="/hombres.html">
+    Hombres
+  </a>
+
+  <a href="/mujeres.html">
+    Mujeres
+  </a>
+
+  <a
+    href="/admin"
+    title="Panel Administrativo"
+    style="
+      display:flex;
+      align-items:center;
+      color:#6366f1;
+    "
+  >
+
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+
+      <circle cx="12" cy="7" r="4"></circle>
+
+    </svg>
+
+  </a>
+
+  <div
+    class="cart-icon-container"
+    onclick="toggleCart()"
+  >
+
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+
+      <circle cx="9" cy="21" r="1"></circle>
+
+      <circle cx="20" cy="21" r="1"></circle>
+
+      <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+
+    </svg>
+
+    <span
+      class="cart-badge"
+      id="cart-count"
+    >
+      0
+    </span>
+
+  </div>
+
+</nav>
 </header>
 
 <div class="cart-overlay" id="cart-sidebar">
