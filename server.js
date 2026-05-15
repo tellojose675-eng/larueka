@@ -46,6 +46,7 @@ const upload = multer({ storage });
 // =========================
 
 async function initializeDatabase() {
+
   try {
 
     await pool.query(`
@@ -55,6 +56,12 @@ async function initializeDatabase() {
         price REAL NOT NULL,
         image TEXT NOT NULL
       )
+    `);
+
+    // AGREGAR COLUMNA CATEGORY
+    await pool.query(`
+      ALTER TABLE products
+      ADD COLUMN IF NOT EXISTS category TEXT
     `);
 
     console.log("✅ PostgreSQL conectado");
@@ -95,6 +102,34 @@ app.get("/products", async (req, res) => {
 });
 
 // =========================
+// Obtener productos por categoría
+// =========================
+
+app.get("/products/category/:category", async (req, res) => {
+
+  try {
+
+    const { category } = req.params;
+
+    const result = await pool.query(
+      "SELECT * FROM products WHERE category=$1 ORDER BY id DESC",
+      [category]
+    );
+
+    res.json(result.rows);
+
+  } catch (err) {
+
+    console.error("❌ Error categorías:");
+    console.error(JSON.stringify(err, null, 2));
+
+    res.status(500).json({
+      error: err.message,
+    });
+  }
+});
+
+// =========================
 // Agregar producto
 // =========================
 
@@ -105,9 +140,10 @@ app.post(
 
     try {
 
-      const { name, price } = req.body;
+      const { name, price, category } = req.body;
 
-      if (!name || !price || !req.file) {
+      if (!name || !price || !req.file || !category) {
+
         return res.status(400).json({
           error: "Todos los campos son obligatorios",
         });
@@ -117,11 +153,11 @@ app.post(
 
       const result = await pool.query(
         `
-        INSERT INTO products (name, price, image)
-        VALUES ($1, $2, $3)
+        INSERT INTO products (name, price, image, category)
+        VALUES ($1, $2, $3, $4)
         RETURNING *
         `,
-        [name, price, image]
+        [name, price, image, category]
       );
 
       res.json(result.rows[0]);
@@ -150,24 +186,22 @@ app.put(
     try {
 
       const { id } = req.params;
-      const { name, price } = req.body;
+      const { name, price, category } = req.body;
 
-      // Buscar producto actual
       const currentProduct = await pool.query(
         "SELECT * FROM products WHERE id=$1",
         [id]
       );
 
       if (currentProduct.rows.length === 0) {
+
         return res.status(404).json({
           error: "Producto no encontrado",
         });
       }
 
-      // Mantener imagen actual
       let image = currentProduct.rows[0].image;
 
-      // Si sube nueva imagen
       if (req.file) {
         image = req.file.path;
       }
@@ -175,11 +209,11 @@ app.put(
       const result = await pool.query(
         `
         UPDATE products
-        SET name=$1, price=$2, image=$3
-        WHERE id=$4
+        SET name=$1, price=$2, image=$3, category=$4
+        WHERE id=$5
         RETURNING *
         `,
-        [name, price, image, id]
+        [name, price, image, category, id]
       );
 
       res.json({
@@ -215,6 +249,7 @@ app.delete("/products/:id", async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+
       return res.status(404).json({
         error: "Producto no encontrado",
       });
@@ -241,6 +276,22 @@ app.delete("/products/:id", async (req, res) => {
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// =========================
+// Página hombres
+// =========================
+
+app.get("/hombres", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "hombres.html"));
+});
+
+// =========================
+// Página mujeres
+// =========================
+
+app.get("/mujeres", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "mujeres.html"));
 });
 
 // =========================
