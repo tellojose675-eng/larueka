@@ -47,6 +47,7 @@ const upload = multer({ storage });
 
 async function initializeDatabase() {
   try {
+
     await pool.query(`
       CREATE TABLE IF NOT EXISTS products (
         id SERIAL PRIMARY KEY,
@@ -57,8 +58,12 @@ async function initializeDatabase() {
     `);
 
     console.log("✅ PostgreSQL conectado");
+
   } catch (err) {
-    console.error("❌ Error PostgreSQL:", err);
+
+    console.error("❌ Error PostgreSQL:");
+    console.error(JSON.stringify(err, null, 2));
+
   }
 }
 
@@ -69,7 +74,9 @@ initializeDatabase();
 // =========================
 
 app.get("/products", async (req, res) => {
+
   try {
+
     const result = await pool.query(
       "SELECT * FROM products ORDER BY id ASC"
     );
@@ -78,7 +85,8 @@ app.get("/products", async (req, res) => {
 
   } catch (err) {
 
-    console.error(err);
+    console.error("❌ Error obteniendo productos:");
+    console.error(JSON.stringify(err, null, 2));
 
     res.status(500).json({
       error: err.message,
@@ -120,7 +128,8 @@ app.post(
 
     } catch (err) {
 
-      console.error(err);
+      console.error("❌ Error agregando producto:");
+      console.error(JSON.stringify(err, null, 2));
 
       res.status(500).json({
         error: err.message,
@@ -155,9 +164,10 @@ app.put(
         });
       }
 
-      // Mantener imagen actual si no sube nueva
+      // Mantener imagen actual
       let image = currentProduct.rows[0].image;
 
+      // Si sube nueva imagen
       if (req.file) {
         image = req.file.path;
       }
@@ -179,7 +189,8 @@ app.put(
 
     } catch (err) {
 
-      console.error(err);
+      console.error("❌ Error actualizando producto:");
+      console.error(JSON.stringify(err, null, 2));
 
       res.status(500).json({
         error: err.message,
@@ -215,7 +226,8 @@ app.delete("/products/:id", async (req, res) => {
 
   } catch (err) {
 
-    console.error(err);
+    console.error("❌ Error eliminando producto:");
+    console.error(JSON.stringify(err, null, 2));
 
     res.status(500).json({
       error: err.message,
