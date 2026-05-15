@@ -5,13 +5,21 @@ const cors = require("cors");
 const path = require("path");
 const { Pool } = require("pg");
 
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const cloudinary = require("./cloudinary");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
+// =========================
 // PostgreSQL
+// =========================
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
@@ -19,7 +27,24 @@ const pool = new Pool({
   },
 });
 
+// =========================
+// Cloudinary Storage
+// =========================
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "productos",
+    allowed_formats: ["jpg", "jpeg", "png", "webp"],
+  },
+});
+
+const upload = multer({ storage });
+
+// =========================
 // Crear tabla automáticamente
+// =========================
+
 async function initializeDatabase() {
   try {
     await pool.query(`
@@ -31,15 +56,18 @@ async function initializeDatabase() {
       )
     `);
 
-    console.log("PostgreSQL conectado");
+    console.log("✅ PostgreSQL conectado");
   } catch (err) {
-    console.error("Error PostgreSQL:", err);
+    console.error("❌ Error PostgreSQL:", err);
   }
 }
 
 initializeDatabase();
 
-// 👉 Obtener todos los productos
+// =========================
+// Obtener productos
+// =========================
+
 app.get("/products", async (req, res) => {
   try {
     const result = await pool.query(
@@ -47,68 +75,127 @@ app.get("/products", async (req, res) => {
     );
 
     res.json(result.rows);
+
   } catch (err) {
+
+    console.error(err);
+
     res.status(500).json({
       error: err.message,
     });
   }
 });
 
-// 👉 Agregar producto
-app.post("/products", async (req, res) => {
-  try {
-    const { name, price, image } = req.body;
+// =========================
+// Agregar producto
+// =========================
 
-    if (!name || !price || !image) {
-      return res.status(400).json({
-        error: "Todos los campos son obligatorios",
+app.post(
+  "/products",
+  upload.single("image"),
+  async (req, res) => {
+
+    try {
+
+      const { name, price } = req.body;
+
+      if (!name || !price || !req.file) {
+        return res.status(400).json({
+          error: "Todos los campos son obligatorios",
+        });
+      }
+
+      const image = req.file.path;
+
+      const result = await pool.query(
+        `
+        INSERT INTO products (name, price, image)
+        VALUES ($1, $2, $3)
+        RETURNING *
+        `,
+        [name, price, image]
+      );
+
+      res.json(result.rows[0]);
+
+    } catch (err) {
+
+      console.error(err);
+
+      res.status(500).json({
+        error: err.message,
       });
     }
-
-    const result = await pool.query(
-      "INSERT INTO products (name, price, image) VALUES ($1, $2, $3) RETURNING *",
-      [name, price, image]
-    );
-
-    res.json(result.rows[0]);
-  } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
   }
-});
+);
 
-// 👉 Actualizar producto
-app.put("/products/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, price, image } = req.body;
+// =========================
+// Actualizar producto
+// =========================
 
-    const result = await pool.query(
-      "UPDATE products SET name=$1, price=$2, image=$3 WHERE id=$4 RETURNING *",
-      [name, price, image, id]
-    );
+app.put(
+  "/products/:id",
+  upload.single("image"),
+  async (req, res) => {
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: "Producto no encontrado",
+    try {
+
+      const { id } = req.params;
+      const { name, price } = req.body;
+
+      // Buscar producto actual
+      const currentProduct = await pool.query(
+        "SELECT * FROM products WHERE id=$1",
+        [id]
+      );
+
+      if (currentProduct.rows.length === 0) {
+        return res.status(404).json({
+          error: "Producto no encontrado",
+        });
+      }
+
+      // Mantener imagen actual si no sube nueva
+      let image = currentProduct.rows[0].image;
+
+      if (req.file) {
+        image = req.file.path;
+      }
+
+      const result = await pool.query(
+        `
+        UPDATE products
+        SET name=$1, price=$2, image=$3
+        WHERE id=$4
+        RETURNING *
+        `,
+        [name, price, image, id]
+      );
+
+      res.json({
+        message: "Producto actualizado",
+        product: result.rows[0],
+      });
+
+    } catch (err) {
+
+      console.error(err);
+
+      res.status(500).json({
+        error: err.message,
       });
     }
-
-    res.json({
-      message: "Producto actualizado",
-      product: result.rows[0],
-    });
-  } catch (err) {
-    res.status(500).json({
-      error: err.message,
-    });
   }
-});
+);
 
-// 👉 Eliminar producto
+// =========================
+// Eliminar producto
+// =========================
+
 app.delete("/products/:id", async (req, res) => {
+
   try {
+
     const { id } = req.params;
 
     const result = await pool.query(
@@ -125,25 +212,39 @@ app.delete("/products/:id", async (req, res) => {
     res.json({
       message: "Producto eliminado",
     });
+
   } catch (err) {
+
+    console.error(err);
+
     res.status(500).json({
       error: err.message,
     });
   }
 });
 
-// 👉 Página principal
+// =========================
+// Página principal
+// =========================
+
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// 👉 Panel admin
+// =========================
+// Panel Admin
+// =========================
+
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
+// =========================
+// Iniciar servidor
+// =========================
+
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Servidor corriendo en puerto ${PORT}`);
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });
