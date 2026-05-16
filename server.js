@@ -47,6 +47,7 @@ const storage = new CloudinaryStorage({
 
   params: {
     folder: "productos",
+
     allowed_formats: [
       "jpg",
       "jpeg",
@@ -99,7 +100,7 @@ async function initializeDatabase() {
 initializeDatabase();
 
 // =========================
-// OBTENER TODOS
+// OBTENER TODOS LOS PRODUCTOS
 // =========================
 
 app.get("/products", async (req, res) => {
@@ -107,9 +108,11 @@ app.get("/products", async (req, res) => {
   try {
 
     const result = await pool.query(`
+
       SELECT *
       FROM products
       ORDER BY id DESC
+
     `);
 
     res.json(result.rows);
@@ -127,48 +130,27 @@ app.get("/products", async (req, res) => {
 });
 
 // =========================
-// PRODUCTOS HOMBRES
+// OBTENER PRODUCTOS POR CATEGORÍA
 // =========================
 
-app.get("/products/hombres", async (req, res) => {
+app.get("/products/category/:category", async (req, res) => {
 
   try {
 
-    const result = await pool.query(`
+    const { category } = req.params;
+
+    const result = await pool.query(
+
+      `
       SELECT *
       FROM products
-      WHERE category = 'hombre'
+      WHERE category = $1
       ORDER BY id DESC
-    `);
+      `,
 
-    res.json(result.rows);
+      [category]
 
-  } catch (err) {
-
-    console.error(err);
-
-    res.status(500).json({
-      error: err.message
-    });
-
-  }
-
-});
-
-// =========================
-// PRODUCTOS MUJERES
-// =========================
-
-app.get("/products/mujeres", async (req, res) => {
-
-  try {
-
-    const result = await pool.query(`
-      SELECT *
-      FROM products
-      WHERE category = 'mujer'
-      ORDER BY id DESC
-    `);
+    );
 
     res.json(result.rows);
 
@@ -416,11 +398,27 @@ app.get("/", (req, res) => {
 });
 
 app.get("/hombres", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "hombres.html"));
+
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "hombres.html"
+    )
+  );
+
 });
 
 app.get("/mujeres", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "mujeres.html"));
+
+  res.sendFile(
+    path.join(
+      __dirname,
+      "public",
+      "mujeres.html"
+    )
+  );
+
 });
 
 app.get("/admin", (req, res) => {
