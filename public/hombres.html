@@ -1,23 +1,65 @@
+<div class="container" id="products"></div>
+
 <script>
+
   const API = "/products/category/hombre";
 
   async function loadProducts() {
-    const res = await fetch(API);
-    const products = await res.json();
 
-    const container = document.getElementById("products");
-    container.innerHTML = "";
+    try {
 
-    products.forEach(p => {
-      container.innerHTML += `
-        <div class="card">
-          <img src="${p.image}" alt="${p.name}">
-          <h3>${p.name}</h3>
-          <p class="price">S/. ${p.price}</p>
-        </div>
-      `;
-    });
+      const res = await fetch(API);
+
+      const products = await res.json();
+
+      const container =
+        document.getElementById("products");
+
+      container.innerHTML = "";
+
+      if (products.length === 0) {
+
+        container.innerHTML =
+          "<p>No hay productos disponibles</p>";
+
+        return;
+
+      }
+
+      products.forEach(p => {
+
+        container.innerHTML += `
+
+          <div class="card">
+
+            <img
+              src="${p.image}"
+              alt="${p.name}"
+            >
+
+            <h3>${p.name}</h3>
+
+            <p class="price">
+              S/. ${p.price}
+            </p>
+
+          </div>
+
+        `;
+
+      });
+
+    } catch (error) {
+
+      console.log(error);
+
+      document.getElementById("products").innerHTML =
+        "<p>Error cargando productos</p>";
+
+    }
+
   }
 
   loadProducts();
+
 </script>
