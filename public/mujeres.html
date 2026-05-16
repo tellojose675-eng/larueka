@@ -74,41 +74,263 @@
 </style>
 
 <script>
-  // Cambiado a la categoría 'mujer' según tu código
-  const API = "/products/category/mujer";
 
-  async function loadProducts() {
-    try {
-      const res = await fetch(API);
-      const products = await res.json();
-      const container = document.getElementById("products");
+const API = "/products/category/mujer";
 
-      container.innerHTML = "";
+const container =
+  document.getElementById("products");
 
-      if (products.length === 0) {
-        container.innerHTML = "<p>No hay productos disponibles</p>";
-        return;
-      }
+const cartSidebar =
+  document.getElementById("cart-sidebar");
 
-      products.forEach(p => {
-        // Renderizado con la estructura de tarjeta y botón de compra
-        container.innerHTML += `
-          <div class="card">
-            <img src="${p.image}" alt="${p.name}">
-            <div class="info">
-              <h3>${p.name}</h3>
-              <p class="price">S/. ${p.price}</p>
-              <button class="btn-add">Agregar al Carrito</button>
-            </div>
-          </div>
-        `;
-      });
+const cartItemsContainer =
+  document.getElementById("cart-items");
 
-    } catch (error) {
-      console.log(error);
-      document.getElementById("products").innerHTML = "<p>Error cargando productos</p>";
+const cartCount =
+  document.getElementById("cart-count");
+
+const cartTotalPrice =
+  document.getElementById("cart-total-price");
+
+let cart =
+  JSON.parse(localStorage.getItem("cart")) || [];
+
+function toggleCart(){
+  cartSidebar.classList.toggle("active");
+}
+
+async function loadProducts(){
+
+  try{
+
+    const response =
+      await fetch(API);
+
+    const data =
+      await response.json();
+
+    container.innerHTML = "";
+
+    if(data.length === 0){
+
+      container.innerHTML =
+        "<p>No hay productos disponibles</p>";
+
+      return;
     }
+
+    data.forEach(product => {
+
+      container.innerHTML += `
+
+        <div class="card">
+
+          <img
+            src="${product.image}"
+            alt="${product.name}"
+            loading="lazy"
+          >
+
+          <div class="info">
+
+            <h3>${product.name}</h3>
+
+            <p>
+              S/. ${product.price}
+            </p>
+
+            <button onclick='addToCart(${JSON.stringify(product)})'>
+              Agregar al Carrito
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    });
+
+    updateCartUI();
+
+  } catch(err){
+
+    console.log(err);
+
+    container.innerHTML =
+      "<p>Error cargando productos</p>";
+
   }
 
-  loadProducts();
+}
+
+function addToCart(product){
+
+  const existingItem =
+    cart.find(item => item.id === product.id);
+
+  if(existingItem){
+
+    existingItem.quantity += 1;
+
+  } else {
+
+    cart.push({
+      ...product,
+      quantity:1
+    });
+
+  }
+
+  saveCart();
+  updateCartUI();
+
+}
+
+function removeFromCart(id){
+
+  cart =
+    cart.filter(item => item.id !== id);
+
+  saveCart();
+  updateCartUI();
+
+}
+
+function updateQuantity(id, delta){
+
+  const item =
+    cart.find(item => item.id === id);
+
+  if(item){
+
+    item.quantity += delta;
+
+    if(item.quantity <= 0){
+
+      removeFromCart(id);
+
+    } else {
+
+      saveCart();
+      updateCartUI();
+
+    }
+
+  }
+
+}
+
+function saveCart(){
+
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(cart)
+  );
+
+}
+
+function updateCartUI(){
+
+  cartItemsContainer.innerHTML = "";
+
+  let total = 0;
+  let count = 0;
+
+  cart.forEach(item => {
+
+    total += item.price * item.quantity;
+    count += item.quantity;
+
+    cartItemsContainer.innerHTML += `
+
+      <div class="cart-item">
+
+        <img src="${item.image}">
+
+        <div class="cart-item-info">
+
+          <h4>${item.name}</h4>
+
+          <p>
+            S/. ${item.price}
+          </p>
+
+          <div class="cart-item-controls">
+
+            <button onclick="updateQuantity(${item.id}, -1)">
+              -
+            </button>
+
+            <span>${item.quantity}</span>
+
+            <button onclick="updateQuantity(${item.id}, 1)">
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+        <button
+          onclick="removeFromCart(${item.id})"
+          style="
+            width:auto;
+            background:none;
+            color:red;
+            font-size:12px;
+            padding:5px;
+          "
+        >
+          Eliminar
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+  cartCount.innerText = count;
+
+  cartTotalPrice.innerText =
+    `S/. ${total.toFixed(2)}`;
+
+}
+
+function checkout(){
+
+  if(cart.length === 0){
+
+    alert("El carrito está vacío");
+    return;
+
+  }
+
+  const phoneNumber =
+    "51996437285";
+
+  let message =
+    "🛍️ *Nuevo Pedido - Tienda de Ropa*%0A%0A";
+
+  cart.forEach(item => {
+
+    message +=
+      `• ${item.name} (x${item.quantity}) - S/. ${item.price * item.quantity}%0A`;
+
+  });
+
+  message +=
+    `%0A💰 *Total a pagar: ${cartTotalPrice.innerText}*`;
+
+  window.open(
+    `https://wa.me/${phoneNumber}?text=${message}`,
+    "_blank"
+  );
+
+}
+
+updateCartUI();
+loadProducts();
+
 </script>
