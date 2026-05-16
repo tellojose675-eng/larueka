@@ -1,69 +1,113 @@
 <div class="container" id="products"></div>
 
-<script>
+<style>
+  body {
+    background-color: #f3f4f6; /* Fondo gris claro de la captura */
+    font-family: system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 20px;
+  }
 
+  .container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px; /* Espaciado entre tarjetas */
+    justify-content: flex-start;
+  }
+
+  .card {
+    background-color: #ffffff;
+    border-radius: 12px; /* Bordes suaves */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); /* Sombra suave */
+    width: 200px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e5e7eb;
+  }
+
+  .card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover; /* Evita que las imágenes se deformen */
+  }
+
+  .info {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+  }
+
+  .info h3 {
+    font-size: 14px;
+    color: #1f2937;
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .price {
+    font-size: 15px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 12px 0;
+  }
+
+  .btn-add {
+    background-color: #000000; /* Botón negro idéntico al diseño */
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+    margin-top: auto; /* Empuja el botón al fondo si los títulos varían de tamaño */
+    transition: background-color 0.2s ease;
+  }
+
+  .btn-add:hover {
+    background-color: #262626;
+  }
+</style>
+
+<script>
   const API = "/products/category/hombre";
 
   async function loadProducts() {
-
     try {
-
       const res = await fetch(API);
-
       const products = await res.json();
-
-      const container =
-        document.getElementById("products");
+      const container = document.getElementById("products");
 
       container.innerHTML = "";
 
       if (products.length === 0) {
-
-        container.innerHTML =
-          "<p>No hay productos disponibles</p>";
-
+        container.innerHTML = "<p>No hay productos disponibles</p>";
         return;
-
       }
 
       products.forEach(p => {
-
+        // Tu misma lógica con las nuevas clases de CSS y el botón negro agregado
         container.innerHTML += `
-
           <div class="card">
-
-            <img
-              src="${p.image}"
-              alt="${p.name}"
-            >
-
+            <img src="${p.image}" alt="${p.name}">
             <div class="info">
-
               <h3>${p.name}</h3>
-
-              <p class="price">
-                S/. ${p.price}
-              </p>
-
+              <p class="price">S/. ${p.price}</p>
+              <button class="btn-add">Agregar al Carrito</button>
             </div>
-
           </div>
-
         `;
-
       });
 
     } catch (error) {
-
       console.log(error);
-
-      document.getElementById("products").innerHTML =
-        "<p>Error cargando productos</p>";
-
+      document.getElementById("products").innerHTML = "<p>Error cargando productos</p>";
     }
-
   }
 
   loadProducts();
-
 </script>
