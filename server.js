@@ -416,27 +416,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/hombres", (req, res) => {
-
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "hombres.html"
-    )
-  );
-
+  res.sendFile(path.join(__dirname, "public", "hombres.html"));
 });
 
 app.get("/mujeres", (req, res) => {
-
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "mujeres.html"
-    )
-  );
-
+  res.sendFile(path.join(__dirname, "public", "mujeres.html"));
 });
 
 app.get("/admin", (req, res) => {
