@@ -143,9 +143,10 @@ body{
   margin-top:8px;
 }
 
+/* 🔥 SOLO CAMBIO AQUÍ (BOTONES CIRCULARES) */
 .qty-btn{
-  width:26px;
-  height:26px;
+  width:28px;
+  height:28px;
   border:none;
   border-radius:50%;
   background:#eee;
@@ -153,6 +154,9 @@ body{
   cursor:pointer;
   font-weight:bold;
   transition:.2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .qty-btn:hover{
@@ -280,13 +284,50 @@ body{
   background:#333;
 }
 
+/* TABLET */
+
+@media(max-width:768px){
+
+  .container{
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+
+  .card img{
+    height:190px;
+  }
+
+}
+
+/* CELULAR */
+
+@media(max-width:480px){
+
+  body{
+    padding:8px;
+  }
+
+  .container{
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+  }
+
+  .card img{
+    height:160px;
+  }
+
+  .cart-overlay{
+    width:100%;
+  }
+
+}
+
 </style>
 
 </head>
 
 <body>
 
-<!-- ICONO CARRITO (IGUAL) -->
 <div class="cart-icon-container" onclick="toggleCart()">
 
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -299,12 +340,14 @@ body{
 
 </div>
 
-<!-- PANEL CARRITO -->
 <div class="cart-overlay" id="cart-sidebar">
 
   <div class="cart-header">
     <h3>Tu Carrito</h3>
-    <button class="close-cart" onclick="toggleCart()">×</button>
+
+    <button class="close-cart" onclick="toggleCart()">
+      &times;
+    </button>
   </div>
 
   <div class="cart-items" id="cart-items"></div>
@@ -324,30 +367,24 @@ body{
 
 </div>
 
-<!-- PRODUCTOS -->
 <div class="container" id="products"></div>
 
 <script>
 
-const API = "/products/category/mujer"; // 👈 SOLO CAMBIO AQUÍ
+const API = "/products/category/mujer";
 
-const container =
-  document.getElementById("products");
+const container = document.getElementById("products");
+const cartSidebar = document.getElementById("cart-sidebar");
+const cartItemsContainer = document.getElementById("cart-items");
+const cartCount = document.getElementById("cart-count");
+const cartTotalPrice = document.getElementById("cart-total-price");
 
-const cartSidebar =
-  document.getElementById("cart-sidebar");
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-const cartItemsContainer =
-  document.getElementById("cart-items");
-
-const cartCount =
-  document.getElementById("cart-count");
-
-const cartTotalPrice =
-  document.getElementById("cart-total-price");
-
-let cart =
-  JSON.parse(localStorage.getItem("cart")) || [];
+window.addEventListener("storage", () => {
+  cart = JSON.parse(localStorage.getItem("cart")) || [];
+  updateCartUI();
+});
 
 function toggleCart(){
   cartSidebar.classList.toggle("active");
@@ -355,13 +392,11 @@ function toggleCart(){
 
 function saveCart(){
   localStorage.setItem("cart", JSON.stringify(cart));
-  updateCartUI();
 }
 
 function addToCart(product){
 
-  const existingItem =
-    cart.find(item => item.id === product.id);
+  const existingItem = cart.find(item => item.id === product.id);
 
   if(existingItem){
     existingItem.quantity += 1;
@@ -370,6 +405,29 @@ function addToCart(product){
   }
 
   saveCart();
+  updateCartUI();
+}
+
+function removeFromCart(id){
+  cart = cart.filter(item => item.id !== id);
+  saveCart();
+  updateCartUI();
+}
+
+function updateQuantity(id, delta){
+
+  const item = cart.find(item => item.id === id);
+  if(!item) return;
+
+  item.quantity += delta;
+
+  if(item.quantity <= 0){
+    removeFromCart(id);
+    return;
+  }
+
+  saveCart();
+  updateCartUI();
 }
 
 function updateCartUI(){
@@ -385,54 +443,60 @@ function updateCartUI(){
     count += item.quantity;
 
     cartItemsContainer.innerHTML += `
-      <div class="cart-item">
-        <img src="${item.image}" alt="${item.name}">
-        <div class="cart-item-info">
-          <h4>${item.name}</h4>
-          <p>S/. ${item.price}</p>
+<div class="cart-item">
 
-          <div class="cart-item-controls">
-            <button onclick="updateQuantity(${item.id}, -1)">-</button>
-            <span>${item.quantity}</span>
-            <button onclick="updateQuantity(${item.id}, 1)">+</button>
-            <button class="remove-btn" onclick="removeFromCart(${item.id})">Eliminar</button>
-          </div>
+  <img src="${item.image}" alt="${item.name}">
 
-        </div>
-      </div>
-    `;
+  <div class="cart-item-info">
+
+    <h4>${item.name}</h4>
+    <p>S/. ${item.price}</p>
+
+    <div class="cart-item-controls">
+
+      <button onclick="updateQuantity(${item.id}, -1)">-</button>
+      <span>${item.quantity}</span>
+      <button onclick="updateQuantity(${item.id}, 1)">+</button>
+
+      <button class="remove-btn" onclick="removeFromCart(${item.id})">
+        Eliminar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+`;
   });
 
   cartCount.innerText = count;
   cartTotalPrice.innerText = `S/. ${total.toFixed(2)}`;
 }
 
-async function loadProducts(){
+function checkout(){
 
-  const res = await fetch(API);
-  const products = await res.json();
+  if(cart.length === 0){
+    alert("El carrito está vacío");
+    return;
+  }
 
-  products.forEach(p => {
+  let message = "🛍️ *Nuevo Pedido*%0A%0A";
+  let total = 0;
 
-    container.innerHTML += `
-      <div class="card">
-        <img src="${p.image}">
-        <div class="info">
-          <h3>${p.name}</h3>
-          <div class="price">S/. ${p.price}</div>
-          <button class="btn-add" onclick='addToCart(${JSON.stringify(p)})'>
-            Agregar al Carrito
-          </button>
-        </div>
-      </div>
-    `;
+  cart.forEach(item => {
+    const subtotal = item.price * item.quantity;
+    total += subtotal;
 
+    message += `• ${item.name} (x${item.quantity}) - S/. ${subtotal}%0A`;
   });
 
+  message += `%0A💰 *Total:* S/. ${total.toFixed(2)}`;
+
+  window.open(`https://wa.me/51996437285?text=${message}`, "_blank");
 }
 
 updateCartUI();
-loadProducts();
 
 </script>
 
