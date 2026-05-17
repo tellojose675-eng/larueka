@@ -21,7 +21,9 @@ body{
   font-family:system-ui,sans-serif;
 }
 
-/* CARRITO */
+/* =========================
+   CARRITO
+========================= */
 
 .cart-icon{
   position:fixed;
@@ -44,7 +46,7 @@ body{
   position:fixed;
   top:0;
   right:-100%;
-  width:380px;
+  width:400px;
   max-width:100%;
   height:100%;
   background:white;
@@ -109,9 +111,9 @@ body{
 }
 
 .cart-item-info p{
-  margin:4px 0;
+  margin:3px 0;
   font-size:13px;
-  color:#555;
+  color:#666;
 }
 
 .cart-controls{
@@ -122,23 +124,30 @@ body{
 }
 
 .qty-btn{
-  width:26px;
-  height:26px;
-  border:none;
+  width:25px;
+  height:25px;
+  padding:0;
+  font-size:14px;
   border-radius:50%;
   background:#eee;
+  color:black;
+  border:none;
   cursor:pointer;
-  font-weight:bold;
+  transition:.2s;
+}
+
+.qty-btn:hover{
+  background:#ddd;
 }
 
 .remove-btn{
-  border:none;
+  width:auto;
   background:none;
   color:red;
-  cursor:pointer;
   font-size:12px;
-  padding:0;
-  margin-top:5px;
+  padding:5px 0;
+  border:none;
+  cursor:pointer;
 }
 
 .cart-footer{
@@ -149,7 +158,7 @@ body{
 .cart-total{
   display:flex;
   justify-content:space-between;
-  font-weight:bold;
+  font-weight:600;
   margin-bottom:15px;
 }
 
@@ -162,13 +171,16 @@ body{
   border-radius:8px;
   cursor:pointer;
   font-size:15px;
+  transition:.3s;
 }
 
 .btn-checkout:hover{
   background:#222;
 }
 
-/* PRODUCTOS */
+/* =========================
+   PRODUCTOS
+========================= */
 
 .container{
   display:grid;
@@ -230,13 +242,16 @@ body{
   font-size:13px;
   cursor:pointer;
   margin-top:auto;
+  transition:.3s;
 }
 
 .btn-add:hover{
   background:#222;
 }
 
-/* TABLET */
+/* =========================
+   RESPONSIVE
+========================= */
 
 @media(max-width:768px){
 
@@ -250,8 +265,6 @@ body{
   }
 
 }
-
-/* CELULAR */
 
 @media(max-width:480px){
 
@@ -339,10 +352,34 @@ const API = "/products/category/mujer";
 const container =
   document.getElementById("products");
 
+const cartSidebar =
+  document.getElementById("cart-sidebar");
+
+const cartItemsContainer =
+  document.getElementById("cart-items");
+
+const cartCount =
+  document.getElementById("cart-count");
+
+const cartTotal =
+  document.getElementById("cart-total");
+
 let cart =
   JSON.parse(localStorage.getItem("cart")) || [];
 
-/* GUARDAR */
+/* =========================
+   ABRIR CARRITO
+========================= */
+
+function toggleCart(){
+
+  cartSidebar.classList.toggle("active");
+
+}
+
+/* =========================
+   GUARDAR
+========================= */
 
 function saveCart(){
 
@@ -353,18 +390,9 @@ function saveCart(){
 
 }
 
-/* ABRIR CARRITO */
-
-function toggleCart(){
-
-  document
-    .getElementById("cart-sidebar")
-    .classList
-    .toggle("active");
-
-}
-
-/* AGREGAR */
+/* =========================
+   AGREGAR
+========================= */
 
 function addToCart(product){
 
@@ -392,7 +420,9 @@ function addToCart(product){
 
 }
 
-/* ELIMINAR */
+/* =========================
+   ELIMINAR
+========================= */
 
 function removeFromCart(id){
 
@@ -407,47 +437,44 @@ function removeFromCart(id){
 
 }
 
-/* CAMBIAR CANTIDAD */
+/* =========================
+   CAMBIAR CANTIDAD
+========================= */
 
-function updateQuantity(id, change){
+function updateQuantity(id, delta){
 
   const item =
     cart.find(
       item => item.id === id
     );
 
-  if(!item) return;
+  if(item){
 
-  item.quantity += change;
+    item.quantity += delta;
 
-  if(item.quantity <= 0){
+    if(item.quantity <= 0){
 
-    removeFromCart(id);
+      removeFromCart(id);
 
-    return;
+    } else {
+
+      saveCart();
+
+      updateCartUI();
+
+    }
 
   }
 
-  saveCart();
-
-  updateCartUI();
-
 }
 
-/* ACTUALIZAR UI */
+/* =========================
+   ACTUALIZAR CARRITO
+========================= */
 
 function updateCartUI(){
 
-  const cartItems =
-    document.getElementById("cart-items");
-
-  const cartCount =
-    document.getElementById("cart-count");
-
-  const cartTotal =
-    document.getElementById("cart-total");
-
-  cartItems.innerHTML = "";
+  cartItemsContainer.innerHTML = "";
 
   let total = 0;
   let count = 0;
@@ -459,7 +486,7 @@ function updateCartUI(){
 
     count += item.quantity;
 
-    cartItems.innerHTML += `
+    cartItemsContainer.innerHTML += `
 
       <div class="cart-item">
 
@@ -518,7 +545,9 @@ function updateCartUI(){
 
 }
 
-/* WHATSAPP */
+/* =========================
+   WHATSAPP
+========================= */
 
 function checkout(){
 
@@ -529,6 +558,9 @@ function checkout(){
     return;
 
   }
+
+  const phoneNumber =
+    "51996437285";
 
   let message =
     "🛍️ *Nuevo Pedido*%0A%0A";
@@ -551,13 +583,15 @@ function checkout(){
     `%0A💰 *Total:* S/. ${total.toFixed(2)}`;
 
   window.open(
-    `https://wa.me/51996437285?text=${message}`,
+    `https://wa.me/${phoneNumber}?text=${message}`,
     "_blank"
   );
 
 }
 
-/* CARGAR PRODUCTOS */
+/* =========================
+   CARGAR PRODUCTOS
+========================= */
 
 async function loadProducts(){
 
@@ -580,28 +614,28 @@ async function loadProducts(){
 
     }
 
-    products.forEach(p => {
+    products.forEach(product => {
 
       container.innerHTML += `
 
         <div class="card">
 
           <img
-            src="${p.image}"
-            alt="${p.name}"
+            src="${product.image}"
+            alt="${product.name}"
           >
 
           <div class="info">
 
-            <h3>${p.name}</h3>
+            <h3>${product.name}</h3>
 
             <div class="price">
-              S/. ${p.price}
+              S/. ${product.price}
             </div>
 
             <button
               class="btn-add"
-              onclick='addToCart(${JSON.stringify(p)})'
+              onclick='addToCart(${JSON.stringify(product)})'
             >
               Agregar al Carrito
             </button>
@@ -614,6 +648,8 @@ async function loadProducts(){
 
     });
 
+    updateCartUI();
+
   } catch(error){
 
     console.log(error);
@@ -624,8 +660,6 @@ async function loadProducts(){
   }
 
 }
-
-updateCartUI();
 
 loadProducts();
 
