@@ -159,16 +159,26 @@ body{
   background:#ddd;
 }
 
+.cart-item-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:100%;
+}
+
 .remove-btn{
-  border:none;
-  background:none;
-  color:red;
-  cursor:pointer;
-  font-size:12px;
-  padding:0;
-  margin-top:8px;
-  width:auto;
-  text-align:left;
+    margin-left:auto;
+    background:none !important;
+    border:none !important;
+    outline:none;
+    color:red;
+    cursor:pointer;
+    font-size:13px;
+    padding:0;
+}
+
+.remove-btn:hover{
+    color:#cc0000;
 }
 
 .cart-footer{
@@ -520,53 +530,37 @@ function updateCartUI(){
 
     cartItemsContainer.innerHTML += `
 
-      <div class="cart-item">
+<div class="cart-item">
 
-        <img
-          src="${item.image}"
-          alt="${item.name}"
-        >
+    <img src="${item.image}" alt="${item.name}">
 
-        <div class="cart-item-info">
+    <div class="cart-item-info">
 
-          <h4>${item.name}</h4>
+        <h4>${item.name}</h4>
 
-          <p>
-            S/. ${item.price}
-          </p>
+        <p>S/. ${item.price}</p>
 
-          <div class="cart-item-controls">
+        <div class="cart-item-controls">
 
-            <button
-              class="qty-btn"
-              onclick="updateQuantity(${item.id}, -1)"
-            >
-              -
-            </button>
+            <button onclick="updateQuantity(${item.id}, -1)">-</button>
 
             <span>${item.quantity}</span>
 
+            <button onclick="updateQuantity(${item.id}, 1)">+</button>
+
             <button
-              class="qty-btn"
-              onclick="updateQuantity(${item.id}, 1)"
+                class="remove-btn"
+                onclick="removeFromCart(${item.id})"
             >
-              +
+                Eliminar
             </button>
-
-          </div>
-
-          <button
-            class="remove-btn"
-            onclick="removeFromCart(${item.id})"
-          >
-            Eliminar
-          </button>
 
         </div>
 
-      </div>
+    </div>
 
-    `;
+</div>
+`;
 
   });
 

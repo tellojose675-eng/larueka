@@ -144,17 +144,26 @@ body{
 
 /* ===== ELIMINAR IGUAL AL INDEX ===== */
 
+.cart-item-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    width:100%;
+}
+
 .remove-btn{
-  width:auto;
-  background:none;
-  border:none;
-  color:red;
-  font-size:12px;
-  padding:5px 0 0;
-  margin-top:5px;
-  cursor:pointer;
-  display:block;
-  text-align:left;
+    margin-left:auto;
+    background:none !important;
+    border:none !important;
+    outline:none;
+    color:red;
+    cursor:pointer;
+    font-size:13px;
+    padding:0;
+}
+
+.remove-btn:hover{
+    color:#cc0000;
 }
 
 /* ========================= */
@@ -497,53 +506,37 @@ function updateCartUI(){
 
     cartItemsContainer.innerHTML += `
 
-      <div class="cart-item">
+<div class="cart-item">
 
-        <img
-          src="${item.image}"
-          alt="${item.name}"
-        >
+    <img src="${item.image}" alt="${item.name}">
 
-        <div class="cart-item-info">
+    <div class="cart-item-info">
 
-          <h4>${item.name}</h4>
+        <h4>${item.name}</h4>
 
-          <p>
-            S/. ${item.price}
-          </p>
+        <p>S/. ${item.price}</p>
 
-          <div class="cart-controls">
+        <div class="cart-item-controls">
 
-            <button
-              class="qty-btn"
-              onclick="updateQuantity(${item.id}, -1)"
-            >
-              -
-            </button>
+            <button onclick="updateQuantity(${item.id}, -1)">-</button>
 
             <span>${item.quantity}</span>
 
+            <button onclick="updateQuantity(${item.id}, 1)">+</button>
+
             <button
-              class="qty-btn"
-              onclick="updateQuantity(${item.id}, 1)"
+                class="remove-btn"
+                onclick="removeFromCart(${item.id})"
             >
-              +
+                Eliminar
             </button>
-
-          </div>
-
-          <button
-            class="remove-btn"
-            onclick="removeFromCart(${item.id})"
-          >
-            Eliminar
-          </button>
 
         </div>
 
-      </div>
+    </div>
 
-    `;
+</div>
+`;
 
   });
 
