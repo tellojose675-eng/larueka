@@ -60,11 +60,12 @@
     right:15px;
     background:black;
     color:white;
-    padding:10px 14px;
-    border-radius:10px;
+    padding:12px 16px;
+    border-radius:12px;
     cursor:pointer;
     z-index:9999;
     font-weight:bold;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
   }
 
   .cart-sidebar{
@@ -74,7 +75,7 @@
     width:350px;
     height:100%;
     background:white;
-    box-shadow:-2px 0 10px rgba(0,0,0,.1);
+    box-shadow:-2px 0 15px rgba(0,0,0,.15);
     transition:.3s;
     z-index:99999;
     display:flex;
@@ -96,7 +97,7 @@
   .cart-header button{
     border:none;
     background:none;
-    font-size:20px;
+    font-size:22px;
     cursor:pointer;
   }
 
@@ -111,6 +112,8 @@
     gap:10px;
     margin-bottom:15px;
     align-items:center;
+    border-bottom:1px solid #eee;
+    padding-bottom:10px;
   }
 
   .cart-item img{
@@ -118,6 +121,26 @@
     height:60px;
     object-fit:cover;
     border-radius:8px;
+  }
+
+  .cart-item h4{
+    margin:0;
+    font-size:14px;
+  }
+
+  .cart-item p{
+    margin:3px 0;
+    font-size:13px;
+  }
+
+  .btn-remove{
+    border:none;
+    background:red;
+    color:white;
+    padding:6px 10px;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
   }
 
   .cart-footer{
@@ -133,6 +156,7 @@
     color:white;
     border-radius:8px;
     cursor:pointer;
+    font-size:14px;
   }
 
   /* PRODUCTOS */
@@ -194,6 +218,10 @@
     margin-top:auto;
   }
 
+  .btn-add:hover{
+    background:#222;
+  }
+
   @media(max-width:768px){
 
     .container{
@@ -232,7 +260,7 @@
 
 <script>
 
-  const API = "/products/hombres";
+  const API = "/products/category/hombre";
 
   let cart =
     JSON.parse(localStorage.getItem("cart")) || [];
@@ -274,6 +302,7 @@
     }
 
     saveCart();
+
     updateCartUI();
 
   }
@@ -284,6 +313,7 @@
       cart.filter(item => item.id !== id);
 
     saveCart();
+
     updateCartUI();
 
   }
@@ -307,15 +337,19 @@
     cart.forEach(item => {
 
       total += item.price * item.quantity;
+
       count += item.quantity;
 
       cartItems.innerHTML += `
 
         <div class="cart-item">
 
-          <img src="${item.image}">
+          <img
+            src="${item.image}"
+            alt="${item.name}"
+          >
 
-          <div>
+          <div style="flex:1;">
 
             <h4>${item.name}</h4>
 
@@ -327,7 +361,10 @@
               Cantidad: ${item.quantity}
             </p>
 
-            <button onclick="removeFromCart(${item.id})">
+            <button
+              class="btn-remove"
+              onclick="removeFromCart(${item.id})"
+            >
               Eliminar
             </button>
 
@@ -342,7 +379,7 @@
     cartCount.innerText = count;
 
     cartTotal.innerText =
-      `Total: S/. ${total}`;
+      `Total: S/. ${total.toFixed(2)}`;
 
   }
 
@@ -351,12 +388,13 @@
     if(cart.length === 0){
 
       alert("El carrito está vacío");
+
       return;
 
     }
 
     let message =
-      "🛍️ Pedido:%0A%0A";
+      "🛍️ *Nuevo Pedido*%0A%0A";
 
     cart.forEach(item => {
 
@@ -364,6 +402,16 @@
         `• ${item.name} x${item.quantity} - S/. ${item.price * item.quantity}%0A`;
 
     });
+
+    const total =
+      cart.reduce(
+        (acc,item) =>
+          acc + (item.price * item.quantity),
+        0
+      );
+
+    message +=
+      `%0A💰 Total: S/. ${total.toFixed(2)}`;
 
     window.open(
       `https://wa.me/51996437285?text=${message}`,
@@ -387,7 +435,7 @@
 
       container.innerHTML = "";
 
-      if(products.length === 0){
+      if(!products || products.length === 0){
 
         container.innerHTML =
           "<p>No hay productos disponibles</p>";
