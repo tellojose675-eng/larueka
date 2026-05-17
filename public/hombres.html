@@ -107,7 +107,7 @@ body{
   display:flex;
   gap:15px;
   margin-bottom:20px;
-  align-items:center;
+  align-items:flex-start;
   border-bottom:1px solid #eee;
   padding-bottom:15px;
 }
@@ -121,6 +121,8 @@ body{
 
 .cart-item-info{
   flex:1;
+  display:flex;
+  flex-direction:column;
 }
 
 .cart-item-info h4{
@@ -157,17 +159,16 @@ body{
   background:#ddd;
 }
 
-/* ELIMINAR IGUAL AL INDEX */
-
 .remove-btn{
-  width:auto;
+  border:none;
   background:none;
   color:red;
-  font-size:12px;
-  padding:5px;
-  border:none;
   cursor:pointer;
-  align-self:flex-start;
+  font-size:12px;
+  padding:0;
+  margin-top:8px;
+  width:auto;
+  text-align:left;
 }
 
 .cart-footer{
@@ -554,14 +555,14 @@ function updateCartUI(){
 
           </div>
 
-        </div>
+          <button
+            class="remove-btn"
+            onclick="removeFromCart(${item.id})"
+          >
+            Eliminar
+          </button>
 
-        <button
-          class="remove-btn"
-          onclick="removeFromCart(${item.id})"
-        >
-          Eliminar
-        </button>
+        </div>
 
       </div>
 
