@@ -12,9 +12,10 @@
     padding: 20px;
   }
 
+  /* COMPUTADORA */
   .container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     width: 100%;
   }
@@ -29,6 +30,7 @@
     flex-direction: column;
     border: 1px solid #e5e7eb;
     transition: transform 0.2s ease;
+    width: 100%;
   }
 
   .card:hover {
@@ -82,27 +84,19 @@
     background-color: #262626;
   }
 
-  /* Tablets */
+  /* TABLET */
   @media (max-width: 768px) {
     body {
       padding: 14px;
     }
 
     .container {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 14px;
-    }
-
-    .info h3 {
-      font-size: 13px;
-    }
-
-    .price {
-      font-size: 14px;
     }
   }
 
-  /* Celulares */
+  /* TELÉFONO */
   @media (max-width: 480px) {
     body {
       padding: 10px;
@@ -119,6 +113,14 @@
 
     .info {
       padding: 10px;
+    }
+
+    .info h3 {
+      font-size: 13px;
+    }
+
+    .price {
+      font-size: 14px;
     }
 
     .btn-add {
