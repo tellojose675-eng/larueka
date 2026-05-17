@@ -107,7 +107,7 @@ body{
   display:flex;
   gap:15px;
   margin-bottom:20px;
-  align-items:center;
+  align-items:flex-start;
   border-bottom:1px solid #eee;
   padding-bottom:15px;
 }
@@ -121,6 +121,8 @@ body{
 
 .cart-item-info{
   flex:1;
+  display:flex;
+  flex-direction:column;
 }
 
 .cart-item-info h4{
@@ -165,6 +167,8 @@ body{
   font-size:12px;
   padding:0;
   margin-top:8px;
+  width:auto;
+  text-align:left;
 }
 
 .cart-footer{
@@ -398,6 +402,17 @@ const cartTotalPrice =
 
 let cart =
   JSON.parse(localStorage.getItem("cart")) || [];
+
+/* SINCRONIZAR ENTRE PÁGINAS */
+
+window.addEventListener("storage", () => {
+
+  cart =
+    JSON.parse(localStorage.getItem("cart")) || [];
+
+  updateCartUI();
+
+});
 
 /* ABRIR CARRITO */
 
