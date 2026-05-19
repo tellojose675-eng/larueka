@@ -782,6 +782,8 @@ async function loadProducts(){
 
     }
 
+    data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+
     data.forEach(product => {
 
       container.innerHTML += `
