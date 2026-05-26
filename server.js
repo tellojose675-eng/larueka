@@ -86,6 +86,19 @@ async function initializeDatabase() {
 
     `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL
+      )
+    `);
+
+    await pool.query(`
+      INSERT INTO settings (key, value)
+      VALUES ('admin_password', 'admin123')
+      ON CONFLICT (key) DO NOTHING
+    `);
+
     console.log("✅ PostgreSQL conectado");
 
   } catch (err) {
@@ -379,6 +392,52 @@ app.delete("/products/:id", async (req, res) => {
 
   }
 
+});
+
+// =========================
+// ADMIN AUTHENTICATION
+// =========================
+
+app.post("/admin/login", async (req, res) => {
+  try {
+    const { password } = req.body;
+    const result = await pool.query(`SELECT value FROM settings WHERE key = 'admin_password'`);
+    if (result.rows.length === 0) {
+      return res.status(500).json({ error: "Configuración no encontrada" });
+    }
+    const adminPassword = result.rows[0].value;
+    if (password === adminPassword) {
+      res.json({ success: true });
+    } else {
+      res.status(401).json({ error: "Contraseña incorrecta" });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/admin/change-password", async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const result = await pool.query(`SELECT value FROM settings WHERE key = 'admin_password'`);
+    if (result.rows.length === 0) {
+      return res.status(500).json({ error: "Configuración no encontrada" });
+    }
+    const adminPassword = result.rows[0].value;
+    if (currentPassword !== adminPassword) {
+      return res.status(401).json({ error: "La contraseña actual es incorrecta" });
+    }
+    if (!newPassword || newPassword.trim().length === 0) {
+      return res.status(400).json({ error: "La nueva contraseña es inválida" });
+    }
+    
+    await pool.query(`UPDATE settings SET value = $1 WHERE key = 'admin_password'`, [newPassword]);
+    res.json({ success: true, message: "Contraseña actualizada" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // =========================

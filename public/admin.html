@@ -254,7 +254,14 @@
     style="display:none;"
   >
 
-    <div class="actions">
+    <div class="actions" style="gap: 10px; justify-content: flex-end; display: flex;">
+
+      <button
+        class="btn-edit"
+        onclick="openPasswordModal()"
+      >
+        Cambiar Contraseña
+      </button>
 
       <button
         class="btn-primary"
@@ -390,6 +397,66 @@
 
   </div>
 
+  <!-- PASSWORD MODAL -->
+
+  <div class="modal-overlay" id="password-modal">
+
+    <div class="modal">
+
+      <h2>
+        Cambiar Contraseña
+      </h2>
+
+      <form id="password-form">
+
+        <div class="form-group">
+
+          <label>Contraseña Actual</label>
+
+          <input
+            type="password"
+            id="current-password"
+            required
+          >
+
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+
+          <label>Nueva Contraseña</label>
+
+          <input
+            type="password"
+            id="new-password"
+            required
+          >
+
+        </div>
+
+        <div class="modal-footer">
+
+          <button
+            type="button"
+            onclick="closePasswordModal()"
+          >
+            Cancelar
+          </button>
+
+          <button
+            type="submit"
+            class="btn-primary"
+          >
+            Actualizar
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
   <script>
 
     const API_URL = "/products";
@@ -410,33 +477,87 @@
 
     // LOGIN
 
-    const PASSWORD_CORRECTA = "admin123";
-
     document.getElementById("login-form")
-      .onsubmit = (e) => {
+      .onsubmit = async (e) => {
 
         e.preventDefault();
 
         const pass =
           document.getElementById("admin-password").value;
 
-        if (pass === PASSWORD_CORRECTA) {
+        try {
 
-          document.getElementById("login-overlay")
-            .style.display = "none";
+          const response = await fetch("/admin/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: pass })
+          });
 
-          document.getElementById("admin-content")
-            .style.display = "block";
+          if (response.ok) {
 
-          loadProducts();
+            document.getElementById("login-overlay")
+              .style.display = "none";
 
-        } else {
+            document.getElementById("admin-content")
+              .style.display = "block";
 
-          document.getElementById("login-error")
-            .style.display = "block";
+            loadProducts();
+
+          } else {
+
+            const data = await response.json();
+            const errorEl = document.getElementById("login-error");
+            errorEl.innerText = data.error || "Contraseña incorrecta";
+            errorEl.style.display = "block";
+
+          }
+
+        } catch (error) {
+
+          console.error(error);
+          alert("Error de conexión");
 
         }
 
+      };
+
+    // CAMBIAR CONTRASEÑA
+
+    function openPasswordModal() {
+      document.getElementById("password-form").reset();
+      document.getElementById("password-modal").classList.add("active");
+    }
+
+    function closePasswordModal() {
+      document.getElementById("password-modal").classList.remove("active");
+    }
+
+    document.getElementById("password-form")
+      .onsubmit = async (e) => {
+        e.preventDefault();
+
+        const currentPassword = document.getElementById("current-password").value;
+        const newPassword = document.getElementById("new-password").value;
+
+        try {
+          const response = await fetch("/admin/change-password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ currentPassword, newPassword })
+          });
+          
+          const data = await response.json();
+          
+          if (response.ok) {
+            alert("Contraseña actualizada exitosamente.");
+            closePasswordModal();
+          } else {
+            alert(data.error || "Error al actualizar contraseña");
+          }
+        } catch (error) {
+          console.error(error);
+          alert("Error de conexión");
+        }
       };
 
     // CARGAR PRODUCTOS
