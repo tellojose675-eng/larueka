@@ -4,6 +4,13 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 const { Pool } = require("pg");
+const crypto = require("crypto");
+
+// Función para encriptar la contraseña usando PBKDF2 (SHA-512)
+function hashPassword(password) {
+  const salt = process.env.PASSWORD_SALT || "larueka_salt_default_123";
+  return crypto.pbkdf2Sync(password, salt, 1000, 64, "sha512").toString("hex");
+}
 
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -93,11 +100,23 @@ async function initializeDatabase() {
       )
     `);
 
+    const defaultHashed = hashPassword('admin123');
     await pool.query(`
       INSERT INTO settings (key, value)
-      VALUES ('admin_password', 'admin123')
+      VALUES ('admin_password', $1)
       ON CONFLICT (key) DO NOTHING
-    `);
+    `, [defaultHashed]);
+
+    // Migrar contraseña existente a hash si está en texto plano
+    const currentPassQuery = await pool.query("SELECT value FROM settings WHERE key = 'admin_password'");
+    if (currentPassQuery.rows.length > 0) {
+      const currentPass = currentPassQuery.rows[0].value;
+      if (currentPass.length !== 128) {
+        const hashedVal = hashPassword(currentPass);
+        await pool.query("UPDATE settings SET value = $1 WHERE key = 'admin_password'", [hashedVal]);
+        console.log("🔑 Contraseña de administrador migrada a formato encriptado");
+      }
+    }
 
     console.log("✅ PostgreSQL conectado");
 
@@ -406,7 +425,8 @@ app.post("/admin/login", async (req, res) => {
       return res.status(500).json({ error: "Configuración no encontrada" });
     }
     const adminPassword = result.rows[0].value;
-    if (password === adminPassword) {
+    const hashedPassword = hashPassword(password);
+    if (hashedPassword === adminPassword) {
       res.json({ success: true });
     } else {
       res.status(401).json({ error: "Contraseña incorrecta" });
@@ -425,14 +445,16 @@ app.post("/admin/change-password", async (req, res) => {
       return res.status(500).json({ error: "Configuración no encontrada" });
     }
     const adminPassword = result.rows[0].value;
-    if (currentPassword !== adminPassword) {
+    const hashedCurrent = hashPassword(currentPassword);
+    if (hashedCurrent !== adminPassword) {
       return res.status(401).json({ error: "La contraseña actual es incorrecta" });
     }
     if (!newPassword || newPassword.trim().length === 0) {
       return res.status(400).json({ error: "La nueva contraseña es inválida" });
     }
     
-    await pool.query(`UPDATE settings SET value = $1 WHERE key = 'admin_password'`, [newPassword]);
+    const hashedNew = hashPassword(newPassword);
+    await pool.query(`UPDATE settings SET value = $1 WHERE key = 'admin_password'`, [hashedNew]);
     res.json({ success: true, message: "Contraseña actualizada" });
   } catch (err) {
     console.error(err);
