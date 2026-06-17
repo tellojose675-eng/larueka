@@ -374,6 +374,37 @@ nav a:hover{
   margin:0 auto;
 }
 
+.subcategory-filters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 30px auto 10px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.filter-btn {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: black;
+  color: white;
+  border-color: black;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
 .card{
   background:white;
   border-radius:16px;
@@ -841,6 +872,16 @@ footer p {
 </div>
 
 <!-- TODOS LOS PRODUCTOS -->
+<div class="subcategory-filters" id="subcategory-filters">
+  <button class="filter-btn active" onclick="changeFilter('todos')" data-filter="todos">Todos</button>
+  <button class="filter-btn" onclick="changeFilter('hombres')" data-filter="hombres">Hombres</button>
+  <button class="filter-btn" onclick="changeFilter('mujeres')" data-filter="mujeres">Mujeres</button>
+  <button class="filter-btn" onclick="changeFilter('polos')" data-filter="polos">Polos</button>
+  <button class="filter-btn" onclick="changeFilter('pantalones')" data-filter="pantalones">Pantalones</button>
+  <button class="filter-btn" onclick="changeFilter('casacas')" data-filter="casacas">Casacas</button>
+  <button class="filter-btn" onclick="changeFilter('ropa-interior')" data-filter="ropa-interior">Ropa Interior</button>
+</div>
+
 <div class="container" id="products"></div>
 
 <script>
@@ -1087,34 +1128,82 @@ function checkout(){
 
 /* PRODUCTOS */
 
+let allProducts = [];
+
+function getProductSubcategory(product) {
+  if (product.category && product.category.includes(":")) {
+    return product.category.split(":")[1];
+  }
+  const name = product.name.toLowerCase();
+  if (name.includes("polo") || name.includes("remera") || name.includes("camiseta")) return "polos";
+  if (name.includes("pantalon") || name.includes("jean") || name.includes("short") || name.includes("buzo") || name.includes("pants")) return "pantalones";
+  if (name.includes("casaca") || name.includes("polar") || name.includes("chompa") || name.includes("abrigo")) return "casacas";
+  if (name.includes("interior") || name.includes("boxer") || name.includes("truza") || name.includes("calzon") || name.includes("biki") || name.includes("hilo") || name.includes("brasier") || name.includes("sosten") || name.includes("duo") || name.includes("semiboxer") || name.includes("bóxer") || name.includes("boxers")) return "ropa-interior";
+  return "otros";
+}
+
+function getMainCategory(product) {
+  if (product.category) {
+    const main = product.category.split(":")[0];
+    return main; // 'hombres' or 'mujeres'
+  }
+  return "";
+}
+
+function renderFilteredProducts(filteredData) {
+  container.innerHTML = "";
+  if (!filteredData || filteredData.length === 0) {
+    container.innerHTML = "<p style='grid-column:1/-1; text-align:center; padding:40px; color:#888;'>No hay productos en esta categoría</p>";
+    return;
+  }
+  filteredData.forEach(product => {
+    container.innerHTML += `
+      <div class="card">
+        <img src="${product.image}" alt="${product.name}" loading="lazy">
+        <div class="info">
+          <h3>${product.name}</h3>
+          <div class="price">S/. ${product.price}</div>
+          <button class="btn-add" onclick='addToCart(${JSON.stringify(product)})'>Agregar al Carrito</button>
+        </div>
+      </div>`;
+  });
+}
+
+function changeFilter(filterValue) {
+  // Update active button
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-filter") === filterValue);
+  });
+
+  let filtered;
+  if (filterValue === "todos") {
+    filtered = allProducts;
+  } else if (filterValue === "hombres" || filterValue === "mujeres") {
+    // Filter by main category
+    filtered = allProducts.filter(p => getMainCategory(p) === filterValue);
+  } else {
+    // Filter by subcategory
+    filtered = allProducts.filter(p => getProductSubcategory(p) === filterValue);
+  }
+
+  renderFilteredProducts(filtered);
+}
+
 async function loadProducts(){
   try{
     const response = await fetch(API);
-    const data = await response.json();
-    container.innerHTML = "";
-    if(!data || data.length === 0){
+    allProducts = await response.json();
+    if(!allProducts || allProducts.length === 0){
       container.innerHTML = "<p>No hay productos disponibles</p>";
       return;
     }
-    data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-    data.forEach(product => {
-      container.innerHTML += `
-        <div class="card">
-          <img src="${product.image}" alt="${product.name}" loading="lazy">
-          <div class="info">
-            <h3>${product.name}</h3>
-            <div class="price">S/. ${product.price}</div>
-            <button class="btn-add" onclick='addToCart(${JSON.stringify(product)})'>Agregar al Carrito</button>
-          </div>
-        </div>`;
-    });
+    allProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    renderFilteredProducts(allProducts);
   } catch(error){
     console.log(error);
     container.innerHTML = "<p>Error cargando productos</p>";
   }
 }
-
-
 
 /* INICIO */
 
