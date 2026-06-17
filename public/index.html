@@ -616,6 +616,44 @@ footer p {
   margin: 0;
 }
 
+/* SECTION BANNERS (dentro de productos) */
+.section-banner {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  margin: 30px 0 0 0;
+}
+.section-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.section-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.section-banner-overlay h2 {
+  color: white;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  border: 2px solid white;
+  padding: 10px 40px;
+  margin: 0;
+}
+.container-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
 </style>
 
 </head>
@@ -977,73 +1015,40 @@ function checkout(){
 
 /* PRODUCTOS */
 
+function makeCard(product) {
+  return `<div class="card">
+    <img src="${product.image}" alt="${product.name}" loading="lazy">
+    <div class="info">
+      <h3>${product.name}</h3>
+      <div class="price">S/. ${product.price}</div>
+      <button class="btn-add" onclick='addToCart(${JSON.stringify(product)})'>Agregar al Carrito</button>
+    </div>
+  </div>`;
+}
+
 async function loadProducts(){
-
   try{
-
-    const response =
-      await fetch(API);
-
-    const data =
-      await response.json();
-
+    const response = await fetch(API);
+    const data = await response.json();
     container.innerHTML = "";
-
     if(!data || data.length === 0){
-
-      container.innerHTML =
-        "<p>No hay productos disponibles</p>";
-
+      container.innerHTML = "<p>No hay productos disponibles</p>";
       return;
-
     }
-
-    data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-
-    data.forEach(product => {
-
-      container.innerHTML += `
-
-        <div class="card">
-
-          <img
-            src="${product.image}"
-            alt="${product.name}"
-            loading="lazy"
-          >
-
-          <div class="info">
-
-            <h3>${product.name}</h3>
-
-            <div class="price">
-              S/. ${product.price}
-            </div>
-
-            <button
-              class="btn-add"
-              onclick='addToCart(${JSON.stringify(product)})'
-            >
-              Agregar al Carrito
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
-
-    });
-
+    const hombres = data.filter(p => p.category === 'hombres').sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
+    const mujeres = data.filter(p => p.category === 'mujeres').sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
+    if(hombres.length > 0){
+      container.innerHTML += `<div class="section-banner"><img src="hombreimagen.png" alt="Hombres"><div class="section-banner-overlay"><h2>HOMBRES</h2></div></div>`;
+      container.innerHTML += `<div class="container-inner">${hombres.map(makeCard).join('')}</div>`;
+    }
+    if(mujeres.length > 0){
+      container.innerHTML += `<div class="section-banner"><img src="mujerimagen.png" alt="Mujeres"><div class="section-banner-overlay"><h2>MUJERES</h2></div></div>`;
+      container.innerHTML += `<div class="container-inner">${mujeres.map(makeCard).join('')}</div>`;
+    }
   } catch(error){
-
     console.log(error);
-
-    container.innerHTML =
-      "<p>Error cargando productos</p>";
-
+    container.innerHTML = "<p>Error cargando productos</p>";
   }
-
 }
 
 
