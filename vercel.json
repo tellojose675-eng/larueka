@@ -11,5 +11,10 @@
       "src": "/(.*)",
       "dest": "server.js"
     }
-  ]
+  ],
+  "env": {
+    "CLOUDINARY_CLOUD_NAME": "dtptjmj07",
+    "CLOUDINARY_API_KEY": "434569815853614",
+    "CLOUDINARY_API_SECRET": "hNA0Lw0gq73qG1y7cGBIL89CrGM"
+  }
 }
