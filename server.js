@@ -204,7 +204,17 @@ app.get("/products/category/:category", async (req, res) => {
 
 app.post(
   "/products",
-  upload.single("image"),
+
+  (req, res, next) => {
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        const errMsg = err.message || JSON.stringify(err) || String(err);
+        console.error("❌ Multer/Cloudinary error (POST):", errMsg);
+        return res.status(500).json({ error: errMsg });
+      }
+      next();
+    });
+  },
 
   async (req, res) => {
 
@@ -224,7 +234,7 @@ app.post(
       ) {
 
         return res.status(400).json({
-          error: "Todos los campos son obligatorios"
+          error: "Todos los campos son obligatorios (incluyendo imagen)"
         });
 
       }
@@ -274,7 +284,17 @@ app.post(
 
 app.put(
   "/products/:id",
-  upload.single("image"),
+
+  (req, res, next) => {
+    upload.single("image")(req, res, (err) => {
+      if (err) {
+        const errMsg = err.message || JSON.stringify(err) || String(err);
+        console.error("❌ Multer/Cloudinary error (PUT):", errMsg);
+        return res.status(500).json({ error: errMsg });
+      }
+      next();
+    });
+  },
 
   async (req, res) => {
 
