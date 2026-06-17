@@ -255,10 +255,11 @@ app.post(
 
     } catch (err) {
 
-      console.error(err);
+      const errMsg = err.message || JSON.stringify(err) || String(err);
+      console.error("❌ Error crear producto:", errMsg);
 
       res.status(500).json({
-        error: err.message
+        error: errMsg
       });
 
     }
@@ -355,10 +356,11 @@ app.put(
 
     } catch (err) {
 
-      console.error(err);
+      const errMsg = err.message || JSON.stringify(err) || String(err);
+      console.error("❌ Error actualizar producto:", errMsg);
 
       res.status(500).json({
-        error: err.message
+        error: errMsg
       });
 
     }
