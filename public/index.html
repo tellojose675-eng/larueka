@@ -766,26 +766,34 @@ footer p {
 
 
 
-<!-- CATEGORÍAS PRINCIPALES -->
-<div class="categories-split">
-  <a href="/hombres" class="category-banner">
-    <img src="hombreimagen.png" alt="Ropa para Hombre">
-    <div class="overlay">
-      <h2>HOMBRES</h2>
-    </div>
-  </a>
-  <a href="/mujeres" class="category-banner">
-    <img src="mujerimagen.png" alt="Ropa para Mujer">
-    <div class="overlay">
-      <h2>MUJERES</h2>
-    </div>
-  </a>
+<!-- CARRUSEL -->
+<div class="carousel-container">
+  <div class="carousel-slide" id="carousel">
+    <img src="hombreimagen.png" class="carousel-item" alt="Ropa para Hombre">
+    <img src="mujerimagen.png" class="carousel-item" alt="Ropa para Mujer">
+  </div>
+  <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+  <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
 </div>
 
 <!-- TODOS LOS PRODUCTOS -->
 <div class="container" id="products"></div>
 
 <script>
+
+/* CARRUSEL LOGIC */
+let slideIndex = 0;
+function moveSlide(n) {
+  showSlides(slideIndex += n);
+}
+function showSlides(n) {
+  let slides = document.querySelectorAll(".carousel-item");
+  if (slides.length === 0) return;
+  if (n >= slides.length) { slideIndex = 0; }
+  if (n < 0) { slideIndex = slides.length - 1; }
+  document.getElementById("carousel").style.transform = `translateX(${-slideIndex * 100}%)`;
+}
+setInterval(() => { moveSlide(1); }, 5000);
 
 const API = "/products";
 
@@ -1015,17 +1023,6 @@ function checkout(){
 
 /* PRODUCTOS */
 
-function makeCard(product) {
-  return `<div class="card">
-    <img src="${product.image}" alt="${product.name}" loading="lazy">
-    <div class="info">
-      <h3>${product.name}</h3>
-      <div class="price">S/. ${product.price}</div>
-      <button class="btn-add" onclick='addToCart(${JSON.stringify(product)})'>Agregar al Carrito</button>
-    </div>
-  </div>`;
-}
-
 async function loadProducts(){
   try{
     const response = await fetch(API);
@@ -1035,16 +1032,18 @@ async function loadProducts(){
       container.innerHTML = "<p>No hay productos disponibles</p>";
       return;
     }
-    const hombres = data.filter(p => p.category === 'hombres').sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
-    const mujeres = data.filter(p => p.category === 'mujeres').sort((a,b) => parseFloat(a.price) - parseFloat(b.price));
-    if(hombres.length > 0){
-      container.innerHTML += `<div class="section-banner"><img src="hombreimagen.png" alt="Hombres"><div class="section-banner-overlay"><h2>HOMBRES</h2></div></div>`;
-      container.innerHTML += `<div class="container-inner">${hombres.map(makeCard).join('')}</div>`;
-    }
-    if(mujeres.length > 0){
-      container.innerHTML += `<div class="section-banner"><img src="mujerimagen.png" alt="Mujeres"><div class="section-banner-overlay"><h2>MUJERES</h2></div></div>`;
-      container.innerHTML += `<div class="container-inner">${mujeres.map(makeCard).join('')}</div>`;
-    }
+    data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    data.forEach(product => {
+      container.innerHTML += `
+        <div class="card">
+          <img src="${product.image}" alt="${product.name}" loading="lazy">
+          <div class="info">
+            <h3>${product.name}</h3>
+            <div class="price">S/. ${product.price}</div>
+            <button class="btn-add" onclick='addToCart(${JSON.stringify(product)})'>Agregar al Carrito</button>
+          </div>
+        </div>`;
+    });
   } catch(error){
     console.log(error);
     container.innerHTML = "<p>Error cargando productos</p>";
