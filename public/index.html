@@ -106,6 +106,48 @@ nav{
   flex-wrap:wrap;
 }
 
+.nav-item {
+  position: relative;
+  display: inline-block;
+  padding: 5px 0;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 10px 0;
+  z-index: 1000;
+  min-width: 160px;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.nav-item:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 8px 20px;
+  color: #555 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: 0.3s;
+  text-align: left;
+}
+
+.dropdown-menu a:hover {
+  background: #f5f5f5;
+  color: #000 !important;
+}
+
 nav a{
   text-decoration:none;
   color:#222;
@@ -677,8 +719,26 @@ footer p {
 
   <nav>
     <a href="/">Inicio</a>
-    <a href="/hombres">Hombres</a>
-    <a href="/mujeres">Mujeres</a>
+    <div class="nav-item">
+      <a href="/hombres">Hombres</a>
+      <div class="dropdown-menu">
+        <a href="/hombres?subcategory=todos">Todos</a>
+        <a href="/hombres?subcategory=polos">Polos</a>
+        <a href="/hombres?subcategory=pantalones">Pantalones</a>
+        <a href="/hombres?subcategory=casacas">Casacas</a>
+        <a href="/hombres?subcategory=ropa-interior">Ropa Interior</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="/mujeres">Mujeres</a>
+      <div class="dropdown-menu">
+        <a href="/mujeres?subcategory=todos">Todas</a>
+        <a href="/mujeres?subcategory=polos">Polos</a>
+        <a href="/mujeres?subcategory=pantalones">Pantalones</a>
+        <a href="/mujeres?subcategory=casacas">Casacas</a>
+        <a href="/mujeres?subcategory=ropa-interior">Ropa Interior</a>
+      </div>
+    </div>
     <a href="/admin" title="Panel Administrativo" style="display:flex; align-items:center; color:#6366f1;">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

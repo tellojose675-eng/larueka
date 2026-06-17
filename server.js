@@ -176,11 +176,11 @@ app.get("/products/category/:category", async (req, res) => {
       `
       SELECT *
       FROM products
-      WHERE category = $1
+      WHERE category = $1 OR category LIKE $2
       ORDER BY id DESC
       `,
 
-      [category]
+      [category, `${category}:%`]
 
     );
 

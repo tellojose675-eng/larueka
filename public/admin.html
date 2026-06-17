@@ -351,11 +351,43 @@
             </option>
 
             <option value="hombres">
-              Hombre
+              Hombre (General)
+            </option>
+
+            <option value="hombres:polos">
+              Hombre - Polos
+            </option>
+
+            <option value="hombres:pantalones">
+              Hombre - Pantalones
+            </option>
+
+            <option value="hombres:casacas">
+              Hombre - Casacas
+            </option>
+
+            <option value="hombres:ropa-interior">
+              Hombre - Ropa Interior
             </option>
 
             <option value="mujeres">
-              Mujer
+              Mujer (General)
+            </option>
+
+            <option value="mujeres:polos">
+              Mujer - Polos
+            </option>
+
+            <option value="mujeres:pantalones">
+              Mujer - Pantalones
+            </option>
+
+            <option value="mujeres:casacas">
+              Mujer - Casacas
+            </option>
+
+            <option value="mujeres:ropa-interior">
+              Mujer - Ropa Interior
             </option>
 
           </select>
@@ -591,6 +623,17 @@
 
     }
 
+    function formatCategory(cat) {
+      if (!cat) return "-";
+      const parts = cat.split(":");
+      const main = parts[0] === "hombres" ? "Hombre" : parts[0] === "mujeres" ? "Mujer" : parts[0];
+      if (parts[1]) {
+        const sub = parts[1] === "polos" ? "Polos" : parts[1] === "pantalones" ? "Pantalones" : parts[1] === "casacas" ? "Casacas" : parts[1] === "ropa-interior" ? "Ropa Interior" : parts[1];
+        return `${main} - ${sub}`;
+      }
+      return main;
+    }
+
     // MOSTRAR PRODUCTOS
 
     function renderProducts() {
@@ -621,7 +664,7 @@
             </td>
 
             <td>
-              ${p.category || "-"}
+              ${formatCategory(p.category)}
             </td>
 
             <td>

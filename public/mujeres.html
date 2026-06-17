@@ -106,6 +106,48 @@ nav{
   flex-wrap:wrap;
 }
 
+.nav-item {
+  position: relative;
+  display: inline-block;
+  padding: 5px 0;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 10px 0;
+  z-index: 1000;
+  min-width: 160px;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.nav-item:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 8px 20px;
+  color: #555 !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: 0.3s;
+  text-align: left;
+}
+
+.dropdown-menu a:hover {
+  background: #f5f5f5;
+  color: #000 !important;
+}
+
 nav a{
   text-decoration:none;
   color:#222;
@@ -274,6 +316,37 @@ nav a:hover{
   padding:20px;
   max-width:1200px;
   margin:0 auto;
+}
+
+.subcategory-filters {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 30px auto 10px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  padding: 0 20px;
+}
+
+.filter-btn {
+  background: white;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 8px 20px;
+  border-radius: 30px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: black;
+  color: white;
+  border-color: black;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .card{
@@ -524,18 +597,27 @@ footer p {
   </h1>
 
   <nav>
-
-    <a href="/">
-      Inicio
-    </a>
-
-    <a href="/hombres.html">
-      Hombres
-    </a>
-
-    <a href="/mujeres.html">
-      Mujeres
-    </a>
+    <a href="/">Inicio</a>
+    <div class="nav-item">
+      <a href="/hombres.html">Hombres</a>
+      <div class="dropdown-menu">
+        <a href="/hombres.html?subcategory=todos">Todos</a>
+        <a href="/hombres.html?subcategory=polos">Polos</a>
+        <a href="/hombres.html?subcategory=pantalones">Pantalones</a>
+        <a href="/hombres.html?subcategory=casacas">Casacas</a>
+        <a href="/hombres.html?subcategory=ropa-interior">Ropa Interior</a>
+      </div>
+    </div>
+    <div class="nav-item">
+      <a href="/mujeres.html">Mujeres</a>
+      <div class="dropdown-menu">
+        <a href="/mujeres.html?subcategory=todos">Todas</a>
+        <a href="/mujeres.html?subcategory=polos">Polos</a>
+        <a href="/mujeres.html?subcategory=pantalones">Pantalones</a>
+        <a href="/mujeres.html?subcategory=casacas">Casacas</a>
+        <a href="/mujeres.html?subcategory=ropa-interior">Ropa Interior</a>
+      </div>
+    </div>
 
     <a
       href="/admin"
@@ -648,6 +730,14 @@ footer p {
 </div>
 
 <!-- PRODUCTOS -->
+
+<div class="subcategory-filters" id="subcategory-filters">
+  <button class="filter-btn active" onclick="changeSubcategory('todos')" data-sub="todos">Todas</button>
+  <button class="filter-btn" onclick="changeSubcategory('polos')" data-sub="polos">Polos</button>
+  <button class="filter-btn" onclick="changeSubcategory('pantalones')" data-sub="pantalones">Pantalones</button>
+  <button class="filter-btn" onclick="changeSubcategory('casacas')" data-sub="casacas">Casacas</button>
+  <button class="filter-btn" onclick="changeSubcategory('ropa-interior')" data-sub="ropa-interior">Ropa Interior</button>
+</div>
 
 <div
   class="container"
@@ -884,74 +974,107 @@ function checkout(){
 
 /* PRODUCTOS */
 
-async function loadProducts(){
+let allProducts = [];
 
-  try{
+function getProductSubcategory(product) {
+  if (product.category && product.category.includes(":")) {
+    return product.category.split(":")[1];
+  }
+  const name = product.name.toLowerCase();
+  if (name.includes("polo") || name.includes("remera") || name.includes("camiseta")) return "polos";
+  if (name.includes("pantalon") || name.includes("jean") || name.includes("short") || name.includes("buzo") || name.includes("pants")) return "pantalones";
+  if (name.includes("casaca") || name.includes("polar") || name.includes("chompa") || name.includes("abrigo") || name.includes("casacas")) return "casacas";
+  if (name.includes("interior") || name.includes("boxer") || name.includes("truza") || name.includes("calzon") || name.includes("biki") || name.includes("hilo") || name.includes("brasier") || name.includes("sosten") || name.includes("duo") || name.includes("semiboxer") || name.includes("bóxer") || name.includes("boxers")) return "ropa-interior";
+  return "otros";
+}
 
-    const response =
-      await fetch(API);
+function renderFilteredProducts(filteredData) {
+  container.innerHTML = "";
 
-    const data =
-      await response.json();
-
-    container.innerHTML = "";
-
-    if(!data || data.length === 0){
-
-      container.innerHTML =
-        "<p>No hay productos disponibles</p>";
-
-      return;
-
-    }
-
-    data.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
-
-    data.forEach(product => {
-
-      container.innerHTML += `
-
-        <div class="card">
-
-          <img
-            src="${product.image}"
-            alt="${product.name}"
-            loading="lazy"
-          >
-
-          <div class="info">
-
-            <h3>${product.name}</h3>
-
-            <div class="price">
-              S/. ${product.price}
-            </div>
-
-            <button
-              class="btn-add"
-              onclick='addToCart(${JSON.stringify(product)})'
-            >
-              Agregar al Carrito
-            </button>
-
-          </div>
-
-        </div>
-
-      `;
-
-    });
-
-  } catch(error){
-
-    console.log(error);
-
-    container.innerHTML =
-      "<p>Error cargando productos</p>";
-
+  if(!filteredData || filteredData.length === 0){
+    container.innerHTML = "<p>No hay productos disponibles en esta categoría</p>";
+    return;
   }
 
+  filteredData.forEach(product => {
+    container.innerHTML += `
+      <div class="card">
+        <img
+          src="${product.image}"
+          alt="${product.name}"
+          loading="lazy"
+        >
+        <div class="info">
+          <h3>${product.name}</h3>
+          <div class="price">
+            S/. ${product.price}
+          </div>
+          <button
+            class="btn-add"
+            onclick='addToCart(${JSON.stringify(product)})'
+          >
+            Agregar al Carrito
+          </button>
+        </div>
+      </div>
+    `;
+  });
 }
+
+function changeSubcategory(sub, updateUrl = true) {
+  // Update active pill button styling
+  const buttons = document.querySelectorAll(".filter-btn");
+  buttons.forEach(btn => {
+    if (btn.getAttribute("data-sub") === sub) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
+    }
+  });
+
+  // Filter
+  let filtered = allProducts;
+  if (sub !== "todos") {
+    filtered = allProducts.filter(p => getProductSubcategory(p) === sub);
+  }
+
+  renderFilteredProducts(filtered);
+
+  // Update URL without reloading
+  if (updateUrl) {
+    const newUrl = sub === "todos" ? window.location.pathname : `${window.location.pathname}?subcategory=${sub}`;
+    history.pushState(null, '', newUrl);
+  }
+}
+
+async function loadProducts(){
+  try{
+    const response = await fetch(API);
+    allProducts = await response.json();
+
+    if(!allProducts || allProducts.length === 0){
+      container.innerHTML = "<p>No hay productos disponibles</p>";
+      return;
+    }
+
+    allProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentSub = urlParams.get('subcategory') || 'todos';
+    changeSubcategory(currentSub, false);
+
+  } catch(error){
+    console.log(error);
+    container.innerHTML = "<p>Error cargando productos</p>";
+  }
+}
+
+/* POPSTATE FOR BACK/FORWARD NAV */
+window.addEventListener('popstate', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const currentSub = urlParams.get('subcategory') || 'todos';
+  changeSubcategory(currentSub, false);
+});
 
 /* INICIO */
 
