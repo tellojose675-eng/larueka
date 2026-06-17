@@ -350,11 +350,11 @@
               Seleccionar
             </option>
 
-            <option value="hombre">
+            <option value="hombres">
               Hombre
             </option>
 
-            <option value="mujer">
+            <option value="mujeres">
               Mujer
             </option>
 
@@ -373,6 +373,8 @@
           >
 
         </div>
+
+        <div id="form-error" style="color:red; font-size:13px; margin-top:8px; display:none;"></div>
 
         <div class="modal-footer">
 
@@ -727,73 +729,47 @@
 
       e.preventDefault();
 
-      const id =
-        document.getElementById("product-id").value;
+      const errorEl = document.getElementById("form-error");
+      errorEl.style.display = "none";
+
+      const id = document.getElementById("product-id").value;
+      const imageInput = document.getElementById("image");
+
+      if (!id && !imageInput.files[0]) {
+        errorEl.innerText = "⚠️ Debes seleccionar una imagen para el producto.";
+        errorEl.style.display = "block";
+        return;
+      }
 
       const formData = new FormData();
-
-      formData.append(
-        "name",
-        document.getElementById("name").value
-      );
-
-      formData.append(
-        "price",
-        document.getElementById("price").value
-      );
-
-      formData.append(
-        "category",
-        document.getElementById("category").value
-      );
-
-      const imageInput =
-        document.getElementById("image");
+      formData.append("name", document.getElementById("name").value);
+      formData.append("price", document.getElementById("price").value);
+      formData.append("category", document.getElementById("category").value);
 
       if (imageInput.files[0]) {
-
-        formData.append(
-          "image",
-          imageInput.files[0]
-        );
-
+        formData.append("image", imageInput.files[0]);
       }
 
       try {
 
-        const response =
-          await fetch(
-
-            id
-              ? `${API_URL}/${id}`
-              : API_URL,
-
-            {
-              method: id ? "PUT" : "POST",
-              body: formData
-            }
-
-          );
+        const response = await fetch(
+          id ? `${API_URL}/${id}` : API_URL,
+          { method: id ? "PUT" : "POST", body: formData }
+        );
 
         if (response.ok) {
-
           closeModal();
-
           loadProducts();
-
         } else {
-
-          const data =
-            await response.json();
-
-          alert(data.error || "Error al guardar");
-
+          const data = await response.json();
+          errorEl.innerText = "❌ " + (data.error || "Error al guardar");
+          errorEl.style.display = "block";
         }
 
       } catch (error) {
-
         console.error(error);
-
+        errorEl.innerText = "❌ Error de conexión. Intenta nuevamente.";
+        errorEl.style.display = "block";
       }
 
     };
