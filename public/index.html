@@ -575,56 +575,25 @@ nav a:hover{
 /* === RESPONSIVE === */
 @media(max-width: 860px) {
   .hero-portada {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto;
-    padding: 35px 20px;
-    width: calc(100% - 20px);
-    border-radius: 15px;
+    padding: 0;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
   }
-  .hero-divider {
-    width: 80%;
-    height: 1px;
-    background: linear-gradient(to right, transparent, #c1896c, transparent);
-    margin: 10px auto;
-    align-self: auto;
-  }
-  .hero-left {
-    padding: 10px 20px 20px;
-  }
-  .hero-right {
-    padding: 20px;
-    align-items: center;
-    text-align: center;
-  }
-  .hero-desc {
-    max-width: 100%;
-  }
-  .hero-badge-top {
-    top: 10px;
-    right: 10px;
-    width: 65px;
-    height: 65px;
-    font-size: 7.5px;
-  }
-  .hero-slogan-title { font-size: 28px; }
-  .hero-slogan-italic { font-size: 24px; }
 }
 
 @media(max-width: 500px) {
   .hero-portada {
-    width: calc(100% - 16px);
-    margin: 10px auto;
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
   }
-  .hero-logo-img { height: 90px; }
-  .hero-brand-name { font-size: 22px; letter-spacing: 5px; }
-  .hero-features {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px 10px;
-    max-width: 280px;
+  .hero-portada img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
   }
-  .hero-slogan-title { font-size: 24px; }
-  .hero-slogan-italic { font-size: 20px; }
-  .hero-feature-icon { width: 40px; height: 40px; font-size: 17px; }
 }
 
 /* PRODUCTOS */
