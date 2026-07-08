@@ -751,26 +751,34 @@ footer p {
   justify-content: flex-start;
   width: 50px;
   height: 50px;
-  background: white;
-  color: black;
+  color: white;
   text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 3px 3px 12px rgba(0,0,0,0.2);
   overflow: hidden;
   border-radius: 0 8px 8px 0;
   margin-bottom: 5px;
 }
 
+/* Colores de marca siempre visibles */
+.floating-socials .facebook { background: #1877F2; }
+.floating-socials .instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+.floating-socials .tiktok   { background: #010101; }
+
+/* Hover: se expande y muestra el nombre */
 .floating-socials a:hover {
-  width: 140px;
-  background: #111;
-  color: white;
+  width: 150px;
 }
+
+.floating-socials .facebook:hover { background: #1056c0; }
+.floating-socials .instagram:hover { filter: brightness(0.85); }
+.floating-socials .tiktok:hover   { background: #333; }
 
 .floating-socials a svg {
   min-width: 50px;
   padding: 12px;
   height: 50px;
+  flex-shrink: 0;
 }
 
 .floating-socials a span {
@@ -785,10 +793,6 @@ footer p {
 .floating-socials a:hover span {
   opacity: 1;
 }
-
-.floating-socials .facebook:hover { background: #1877F2; }
-.floating-socials .instagram:hover { background: #E1306C; }
-.floating-socials .tiktok:hover { background: black; }
 
 @media(max-width:768px){
   .floating-socials {
