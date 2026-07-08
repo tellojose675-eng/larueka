@@ -131,6 +131,16 @@ nav{
   display: block;
 }
 
+.nav-item.touch-open .dropdown-menu {
+  display: block;
+}
+
+.nav-item > a::after {
+  content: ' \25BE';
+  font-size: 9px;
+  opacity: 0.6;
+}
+
 .dropdown-menu a {
   display: block;
   padding: 8px 20px;
@@ -599,7 +609,7 @@ footer p {
   <nav>
     <a href="/">Inicio</a>
     <div class="nav-item">
-      <a href="/hombres.html">Hombres</a>
+      <a href="/hombres.html" class="nav-link-drop">Hombres</a>
       <div class="dropdown-menu">
         <a href="/hombres.html?subcategory=todos">Todos</a>
         <a href="/hombres.html?subcategory=polos">Polos</a>
@@ -609,7 +619,7 @@ footer p {
       </div>
     </div>
     <div class="nav-item">
-      <a href="/mujeres.html">Mujeres</a>
+      <a href="/mujeres.html" class="nav-link-drop">Mujeres</a>
       <div class="dropdown-menu">
         <a href="/mujeres.html?subcategory=todos">Todas</a>
         <a href="/mujeres.html?subcategory=polos">Polos</a>
@@ -1081,6 +1091,28 @@ window.addEventListener('popstate', () => {
 updateCartUI();
 
 loadProducts();
+
+/* DROPDOWN TÁCTIL (móvil) */
+document.querySelectorAll('.nav-link-drop').forEach(function(link) {
+  link.addEventListener('touchstart', function(e) {
+    var navItem = this.parentElement;
+    var isOpen = navItem.classList.contains('touch-open');
+    document.querySelectorAll('.nav-item').forEach(function(el) {
+      el.classList.remove('touch-open');
+    });
+    if (!isOpen) {
+      e.preventDefault();
+      navItem.classList.add('touch-open');
+    }
+  }, { passive: false });
+});
+document.addEventListener('touchstart', function(e) {
+  if (!e.target.closest('.nav-item')) {
+    document.querySelectorAll('.nav-item').forEach(function(el) {
+      el.classList.remove('touch-open');
+    });
+  }
+});
 
 </script>
 
