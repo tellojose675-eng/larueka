@@ -1433,7 +1433,24 @@ async function loadProducts(){
       container.innerHTML = "<p>No hay productos disponibles</p>";
       return;
     }
-    allProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    const genderOrder = ["mujeres", "hombres"];
+    const categoryOrder = ["polos", "pantalones", "casacas", "ropa-interior", "otros"];
+    allProducts.sort((a, b) => {
+      const genA = getMainCategory(a);
+      const genB = getMainCategory(b);
+      const genIndexA = genderOrder.indexOf(genA) !== -1 ? genderOrder.indexOf(genA) : 99;
+      const genIndexB = genderOrder.indexOf(genB) !== -1 ? genderOrder.indexOf(genB) : 99;
+      
+      if (genIndexA !== genIndexB) {
+        return genIndexA - genIndexB;
+      }
+
+      const subA = getProductSubcategory(a);
+      const subB = getProductSubcategory(b);
+      const indexA = categoryOrder.indexOf(subA) !== -1 ? categoryOrder.indexOf(subA) : 99;
+      const indexB = categoryOrder.indexOf(subB) !== -1 ? categoryOrder.indexOf(subB) : 99;
+      return indexA - indexB;
+    });
     renderFilteredProducts(allProducts);
   } catch(error){
     console.log(error);

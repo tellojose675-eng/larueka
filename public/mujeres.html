@@ -1142,7 +1142,14 @@ async function loadProducts(){
       return;
     }
 
-    allProducts.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+    const categoryOrder = ["polos", "pantalones", "casacas", "ropa-interior", "otros"];
+    allProducts.sort((a, b) => {
+      const subA = getProductSubcategory(a);
+      const subB = getProductSubcategory(b);
+      const indexA = categoryOrder.indexOf(subA) !== -1 ? categoryOrder.indexOf(subA) : 99;
+      const indexB = categoryOrder.indexOf(subB) !== -1 ? categoryOrder.indexOf(subB) : 99;
+      return indexA - indexB;
+    });
 
     const urlParams = new URLSearchParams(window.location.search);
     const currentSub = urlParams.get('subcategory') || 'todos';
