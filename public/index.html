@@ -961,6 +961,7 @@ footer p {
 .floating-socials .facebook { background: #1877F2; }
 .floating-socials .instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .floating-socials .tiktok   { background: #010101; }
+.floating-socials .email-btn { background: #d44638; }
 
 /* Hover: se expande y muestra el nombre */
 .floating-socials a:hover {
@@ -970,6 +971,7 @@ footer p {
 .floating-socials .facebook:hover { background: #1056c0; }
 .floating-socials .instagram:hover { filter: brightness(0.85); }
 .floating-socials .tiktok:hover   { background: #333; }
+.floating-socials .email-btn:hover { background: #b23121; }
 
 .floating-socials a svg {
   min-width: 50px;
@@ -1506,6 +1508,19 @@ document.addEventListener('touchstart', function(e) {
   <div class="footer-copy">
     &copy; 2026 La Rueka. Todos los derechos reservados.
   </div>
+
+  <!-- BOTONES LEGALES INDECOPI -->
+  <div style="margin:18px 0 10px;display:flex;justify-content:center;flex-wrap:wrap;gap:20px;font-size:13px;">
+    <a href="/terminos" style="color:#bbb;text-decoration:none;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bbb'">T&eacute;rminos y Condiciones</a>
+    <a href="/privacidad" style="color:#bbb;text-decoration:none;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bbb'">Pol&iacute;tica de Privacidad</a>
+    <a href="/devoluciones" style="color:#bbb;text-decoration:none;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#bbb'">Cambios y Devoluciones</a>
+  </div>
+
+  <div style="margin:16px 0 20px;">
+    <a href="/reclamaciones" style="display:inline-flex;align-items:center;gap:10px;background:#fff;color:#111;padding:12px 26px;border-radius:10px;font-weight:700;text-decoration:none;font-size:15px;border:2px solid #ddd;box-shadow:0 4px 16px rgba(0,0,0,0.2);" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 24px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='translateY(0)';this.style.boxShadow='0 4px 16px rgba(0,0,0,0.2)'">
+      &#128218; Libro de Reclamaciones
+    </a>
+  </div>
 </footer>
 
 <a href="https://wa.me/51996437285" target="_blank" class="floating-wa" title="Escríbenos por WhatsApp">
@@ -1524,10 +1539,14 @@ document.addEventListener('touchstart', function(e) {
     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
     <span>Instagram</span>
   </a>
-  <a href="https://www.tiktok.com/@rueka.pe" target="_blank" class="tiktok" title="TikTok">
-    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
-    <span>TikTok</span>
-  </a>
+      <a href="https://www.tiktok.com/@rueka.pe" target="_blank" class="tiktok" title="TikTok">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg>
+      <span>TikTok</span>
+    </a>
+    <a href="mailto:laruekaperu@gmail.com" class="email-btn" title="Correo">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      <span>Correo</span>
+    </a>
 </div>
 
 <!-- ADMIN OCULTO -->

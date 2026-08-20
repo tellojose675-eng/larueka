@@ -30,7 +30,7 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { extensions: ['html'] }));
 
 // =========================
 // POSTGRESQL
@@ -93,19 +93,7 @@ async function initializeDatabase() {
 
     `);
 
-    await pool.query(`
-      CREATE TABLE IF NOT EXISTS settings (
-        key TEXT PRIMARY KEY,
-        value TEXT NOT NULL
-      )
-    `);
 
-    const defaultHashed = hashPassword('admin123');
-    await pool.query(`
-      INSERT INTO settings (key, value)
-      VALUES ('admin_password', $1)
-      ON CONFLICT (key) DO NOTHING
-    `, [defaultHashed]);
 
     // Migrar contraseña existente a hash si está en texto plano
     const currentPassQuery = await pool.query("SELECT value FROM settings WHERE key = 'admin_password'");
@@ -484,57 +472,7 @@ app.post("/admin/change-password", async (req, res) => {
   }
 });
 
-// =========================
-// PÁGINAS
-// =========================
 
-app.get("/", (req, res) => {
-
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "index.html"
-    )
-  );
-
-});
-
-app.get("/hombres", (req, res) => {
-
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "hombres.html"
-    )
-  );
-
-});
-
-app.get("/mujeres", (req, res) => {
-
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "mujeres.html"
-    )
-  );
-
-});
-
-app.get("/admin", (req, res) => {
-
-  res.sendFile(
-    path.join(
-      __dirname,
-      "public",
-      "admin.html"
-    )
-  );
-
-});
 
 // =========================
 // SERVIDOR

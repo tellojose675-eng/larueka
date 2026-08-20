@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Libro de Reclamaciones | LA RUEKA</title>
+  <link rel="icon" type="image/png" href="logo_larueka.png">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: 'Outfit', sans-serif; background: #f4f5f7; color: #222; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(255, 255, 255, 0.95); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+    .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo { height: 50px; width: auto; }
+    .logo-slogan { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 800; color: #111; letter-spacing: 2px; text-transform: uppercase; }
+    nav a { text-decoration: none; color: #222; font-size: 13px; font-weight: 700; text-transform: uppercase; margin-left: 20px; transition: .3s; }
+    nav a:hover { color: #e63946; }
+    
+    .reclamacion-container { max-width: 850px; margin: 30px auto; padding: 35px; background: white; border-radius: 16px; box-shadow: 0 4px 25px rgba(0,0,0,0.06); }
+    .book-header { text-align: center; border-bottom: 2px solid #111; padding-bottom: 20px; margin-bottom: 25px; }
+    .book-header h1 { font-family: 'Playfair Display', serif; font-size: 28px; margin: 0 0 10px; color: #111; text-transform: uppercase; letter-spacing: 1px; }
+    .book-header p { font-size: 13px; color: #666; margin: 0; }
+
+    .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; color: #e63946; background: #fff5f5; padding: 8px 15px; border-left: 4px solid #e63946; margin: 25px 0 15px; border-radius: 0 6px 6px 0; }
+    
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group.full { grid-column: 1 / -1; }
+    label { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #444; margin-bottom: 6px; }
+    input, select, textarea { padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: 'Outfit', sans-serif; font-size: 14px; outline: none; transition: .3s; }
+    input:focus, select:focus, textarea:focus { border-color: #111; box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+    
+    .radio-group { display: flex; gap: 20px; align-items: center; padding: 10px 0; }
+    .radio-group label { font-weight: 400; text-transform: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+
+    .btn-submit { width: 100%; padding: 15px; background: #111; color: white; border: none; border-radius: 8px; font-weight: 700; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; margin-top: 30px; transition: .3s; }
+    .btn-submit:hover { background: #e63946; }
+
+    .alert-success { display: none; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 20px; border-radius: 12px; margin-top: 20px; text-align: center; }
+    .alert-success h3 { margin: 0 0 10px; font-size: 20px; }
+
+    footer { background: #111; color: #fff; padding: 40px 5%; text-align: center; margin-top: 50px; }
+    footer a { color: #fff; text-decoration: none; margin: 0 10px; font-size: 14px; }
+    footer a:hover { color: #e63946; }
+    .footer-copy { font-size: 12px; color: #666; margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="/" class="logo-container">
+    <img src="logo_larueka.png" alt="LA RUEKA" class="logo">
+    <span class="logo-slogan">LA RUEKA</span>
+  </a>
+  <nav>
+    <a href="/">Inicio</a>
+    <a href="/hombres">Hombres</a>
+    <a href="/mujeres">Mujeres</a>
+  </nav>
+</header>
+
+<div class="reclamacion-container">
+  <div class="book-header">
+    <h1>Libro de Reclamaciones Virtual</h1>
+    <p>Conforme a lo establecido en el Código de Protección y Defensa del Consumidor (Ley N° 29571)</p>
+    <p><strong>LA RUEKA PERÚ</strong> - Comercio Electrónico</p>
+  </div>
+
+  <div id="alertSuccess" class="alert-success">
+    <h3>¡Reclamo Registrado Exitosamente!</h3>
+    <p>Hemos recibido su hoja de reclamación. Su código de seguimiento es:</p>
+    <p style="font-size:24px; font-weight:bold; color:#155724; margin:10px 0;" id="codeDisplay"></p>
+    <p>Nos comunicaremos con usted al correo o teléfono proporcionado en un plazo máximo de 15 días hábiles según norma legal.</p>
+  </div>
+
+  <form id="reclamationForm">
+    <div class="section-title">1. Identificación del Consumidor Reclamante</div>
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Nombre Completo *</label>
+        <input type="text" id="nombre" required placeholder="Nombres y Apellidos">
+      </div>
+      <div class="form-group">
+        <label>Tipo de Documento *</label>
+        <select id="tipo_documento" required>
+          <option value="DNI">DNI</option>
+          <option value="CE">Carnet de Extranjería</option>
+          <option value="RUC">RUC</option>
+          <option value="Pasaporte">Pasaporte</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Número de Documento *</label>
+        <input type="text" id="numero_documento" required placeholder="12345678">
+      </div>
+      <div class="form-group">
+        <label>Teléfono / WhatsApp *</label>
+        <input type="tel" id="telefono" required placeholder="987654321">
+      </div>
+      <div class="form-group">
+        <label>Correo Electrónico *</label>
+        <input type="email" id="email" required placeholder="correo@ejemplo.com">
+      </div>
+      <div class="form-group full">
+        <label>Dirección Domiciliaria</label>
+        <input type="text" id="direccion" placeholder="Av. Ejemplo 123, Distrito, Ciudad">
+      </div>
+    </div>
+
+    <div class="section-title">2. Identificación del Bien Contratado</div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Tipo de Bien *</label>
+        <select id="tipo_bien" required>
+          <option value="Producto">Producto (Prenda / Ropa)</option>
+          <option value="Servicio">Servicio (Envío / Atención)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Monto Reclamado (S/.)</label>
+        <input type="number" step="0.01" id="monto_reclamado" placeholder="0.00">
+      </div>
+      <div class="form-group full">
+        <label>Descripción del Producto o Servicio</label>
+        <input type="text" id="descripcion_bien" placeholder="Ej: Polo Oversize Talla M / Pedido #1024">
+      </div>
+    </div>
+
+    <div class="section-title">3. Detalle de la Reclamación</div>
+    <div class="form-group full">
+      <label>Tipo de Solicitud *</label>
+      <div class="radio-group">
+        <label><input type="radio" name="tipo_reclamacion" value="Reclamo" checked> <strong>RECLAMO</strong> (Disconformidad relacionada a los productos o servicios)</label>
+        <label><input type="radio" name="tipo_reclamacion" value="Queja"> <strong>QUEJA</strong> (Disconformidad no relacionada a los productos; malestar en la atención)</label>
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Detalle del Reclamo o Queja *</label>
+        <textarea id="detalle_reclamacion" rows="4" required placeholder="Explique detalladamente los hechos sucedidos..."></textarea>
+      </div>
+      <div class="form-group full">
+        <label>Pedido o Solicitud del Consumidor *</label>
+        <textarea id="pedido_consumidor" rows="3" required placeholder="Indique qué solución requiere (ej. Cambio de prenda, devolución del dinero, etc.)"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit" id="btnSubmit">Enviar Hoja de Reclamación</button>
+  </form>
+</div>
+
+<footer>
+  <p><strong>LA RUEKA</strong> - "Íntima. Real. Tú."</p>
+  <div>
+    <a href="/">Inicio</a> |
+    <a href="/terminos">Términos y Condiciones</a> |
+    <a href="/privacidad">Política de Privacidad</a> |
+    <a href="/devoluciones">Cambios y Devoluciones</a> |
+    <a href="/reclamaciones">Libro de Reclamaciones</a>
+  </div>
+  <div class="footer-copy">
+    &copy; 2026 LA RUEKA. Todos los derechos reservados.
+  </div>
+</footer>
+
+<script>
+document.getElementById('reclamationForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.innerText = 'Enviando Reclamo...';
+
+  const tipo_reclamacion = document.querySelector('input[name="tipo_reclamacion"]:checked').value;
+
+  const data = {
+    nombre: document.getElementById('nombre').value,
+    tipo_documento: document.getElementById('tipo_documento').value,
+    numero_documento: document.getElementById('numero_documento').value,
+    telefono: document.getElementById('telefono').value,
+    email: document.getElementById('email').value,
+    direccion: document.getElementById('direccion').value,
+    tipo_bien: document.getElementById('tipo_bien').value,
+    monto_reclamado: document.getElementById('monto_reclamado').value || '0.00',
+    descripcion_bien: document.getElementById('descripcion_bien').value,
+    tipo_reclamacion: tipo_reclamacion,
+    detalle_reclamacion: document.getElementById('detalle_reclamacion').value,
+    pedido_consumidor: document.getElementById('pedido_consumidor').value
+  };
+
+  try {
+    const response = await fetch('/api/reclamos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    const resData = await response.json();
+
+    if (response.ok && resData.success) {
+      document.getElementById('reclamationForm').style.display = 'none';
+      document.getElementById('alertSuccess').style.display = 'block';
+      document.getElementById('codeDisplay').innerText = resData.reclamo.codigo;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      alert('Error al enviar el reclamo: ' + (resData.error || 'Intente nuevamente'));
+      btn.disabled = false;
+      btn.innerText = 'Enviar Hoja de Reclamación';
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Ocurrió un error de conexión al guardar su reclamo.');
+    btn.disabled = false;
+    btn.innerText = 'Enviar Hoja de Reclamación';
+  }
+});
+</script>
+
+</body>
+</html>
