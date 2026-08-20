@@ -247,7 +247,56 @@
 
   </div>
 
+  <!-- CONTENIDO -->
 
+  <div
+    class="container"
+    id="admin-content"
+    style="display:none;"
+  >
+
+    <div class="actions" style="gap: 10px; justify-content: flex-end; display: flex;">
+
+      <button
+        class="btn-edit"
+        onclick="openPasswordModal()"
+      >
+        Cambiar Contraseña
+      </button>
+
+      <button
+        class="btn-primary"
+        onclick="openModal()"
+      >
+        + Agregar Producto
+      </button>
+
+    </div>
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>ID</th>
+          <th>Imagen</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Categoría</th>
+          <th>Acciones</th>
+        </tr>
+
+      </thead>
+
+      <tbody id="product-tbody"></tbody>
+
+    </table>
+
+    <div id="loader" class="loader">
+      Cargando...
+    </div>
+
+  </div>
 
   <!-- MODAL -->
 
@@ -751,7 +800,24 @@
           { method: id ? "PUT" : "POST", body: formData }
         );
 
+        if (response.ok) {
+          closeModal();
+          loadProducts();
+        } else {
+          const data = await response.json();
+          errorEl.innerText = "❌ " + (data.error || "Error al guardar");
+          errorEl.style.display = "block";
+        }
 
+      } catch (error) {
+        console.error(error);
+        errorEl.innerText = "❌ Error de conexión. Intenta nuevamente.";
+        errorEl.style.display = "block";
+      }
+
+    };
+
+  </script>
 
 </body>
 
