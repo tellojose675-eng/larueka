@@ -471,7 +471,7 @@ async function sendReclamoEmail(reclamo) {
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
         <div style="background-color: #111111; color: #ffffff; padding: 25px; text-align: center;">
           <h2 style="margin: 0; font-size: 24px; letter-spacing: 2px; text-transform: uppercase;">Nuevo Reclamo Registrado</h2>
-          <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.8;">LA RUEKA - Libro de Reclamaciones</p>
+          <p style="margin: 5px 0 0 0; font-size: 14px; opacity: 0.8;">ANGEL ROSA - Libro de Reclamaciones</p>
         </div>
         <div style="padding: 25px; background-color: #ffffff; color: #333333; line-height: 1.6;">
           <div style="text-align: center; margin-bottom: 25px; padding: 15px; background-color: #f9f9f9; border-radius: 6px; border-left: 4px solid #e63946;">
@@ -542,14 +542,14 @@ async function sendReclamoEmail(reclamo) {
           </div>
         </div>
         <div style="background-color: #f5f5f5; text-align: center; padding: 15px; font-size: 12px; color: #666666; border-top: 1px solid #e0e0e0;">
-          Este correo fue generado automáticamente por la plataforma de LA RUEKA.<br/>
+          Este correo fue generado automáticamente por la plataforma de ANGEL ROSA.<br/>
           Por favor, atienda el reclamo dentro del plazo legal de 15 días hábiles.
         </div>
       </div>
     `;
 
     const info = await transporter.sendMail({
-      from: `"Libro de Reclamaciones LA RUEKA" <${user}>`,
+      from: `"Libro de Reclamaciones ANGEL ROSA" <${user}>`,
       to: toEmail,
       subject: `[${reclamo.tipo_reclamacion.toUpperCase()}] Libro de Reclamaciones - ${reclamo.codigo}`,
       html: htmlContent,

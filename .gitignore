@@ -5,3 +5,5 @@ tienda.db-journal
 
 .vercel
 .env*
+*.ps1
+scratch/
