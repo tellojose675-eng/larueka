@@ -39,6 +39,29 @@
 
 <style>
 
+:root {
+  /* 10% Acentos: Botones de compra, ofertas y elementos destacados */
+  --color-pink: #F52F78;              /* Rosa intenso de marca */
+  --color-pink-hover: #D91B62;        /* Rosa hover */
+  --color-pink-glow: rgba(245, 47, 120, 0.28);
+  --color-gold: #D6A348;              /* Dorado: alas del logo, detalles sutiles, sellos */
+  --color-gold-hover: #BA8A32;
+  --color-gold-subtle: rgba(214, 163, 72, 0.35);
+
+  /* 20% Contraste y Formalidad: Títulos, menú y estructura */
+  --color-black: #252323;             /* Negro elegante */
+  --color-dark-surface: #1E1C1C;      /* Fondo oscuro secundario */
+  --color-text-muted: #6E6868;        /* Texto secundario para descripciones */
+
+  /* 70% Base Limpia y Espaciosa: Fondos y tarjetas */
+  --color-white: #FFFFFF;             /* Blanco principal y tarjetas */
+  --color-ivory: #F5F1EE;             /* Marfil suave para fondos secundarios */
+  --color-border: #EAE5E1;            /* Borde fino marfil */
+  --color-shadow: rgba(37, 35, 35, 0.05);
+  --color-shadow-hover: rgba(37, 35, 35, 0.12);
+}
+
+
 *{
   box-sizing:border-box;
 }
@@ -46,15 +69,15 @@
 body{
   margin:0;
   font-family:'Outfit',sans-serif;
-  background:#fafafa;
-  color:#222;
+  background: var(--color-white);
+  color: var(--color-black);
 }
 
 /* HEADER & MARQUEE */
 
 .marquee-banner {
-  background: #111;
-  color: #fff;
+  background: var(--color-black);
+  color: var(--color-ivory);
   font-family: 'Outfit', sans-serif;
   font-size: 12px;
   font-weight: 600;
@@ -63,6 +86,7 @@ body{
   padding: 8px 0;
   overflow: hidden;
   white-space: nowrap;
+  border-bottom: 1px solid rgba(214, 163, 72, 0.25);
 }
 
 .marquee-banner p {
@@ -77,15 +101,15 @@ body{
   100% { transform: translate(-100%, 0); }
 }
 
-header{
+header {
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:15px 5%;
-  background:rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-bottom:1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid var(--color-border);
   position:sticky;
   top:0;
   z-index:1000;
@@ -105,13 +129,13 @@ header h1{
   object-fit:contain;
 }
 
-.logo-slogan{
+.logo-slogan {
   font-family: 'Playfair Display', serif;
   font-size:32px;
   font-weight:800;
-  background: linear-gradient(45deg, #111111, #555555);
+  background: none;
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color: var(--color-black);
   letter-spacing:2px;
   text-transform:uppercase;
   margin:0;
@@ -138,13 +162,13 @@ nav{
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
+  background: var(--color-white);
   box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   border-radius: 8px;
   padding: 10px 0;
   z-index: 1000;
   min-width: 160px;
-  border: 1px solid rgba(0,0,0,0.05);
+  border: 1px solid var(--color-border);
 }
 
 .nav-item:hover .dropdown-menu {
@@ -175,13 +199,13 @@ nav{
 }
 
 .dropdown-menu a:hover {
-  background: #f5f5f5;
-  color: #000 !important;
+  background: var(--color-ivory);
+  color: var(--color-pink) !important;
 }
 
-nav a{
+nav a {
   text-decoration:none;
-  color:#222;
+  color: var(--color-black);
   font-size:13px;
   font-weight:700;
   text-transform:uppercase;
@@ -189,8 +213,8 @@ nav a{
   transition:.3s;
 }
 
-nav a:hover{
-  color:black;
+nav a:hover, .nav-item:hover > a {
+  color: var(--color-pink);
 }
 
 /* CARRITO */
@@ -203,16 +227,17 @@ nav a:hover{
   justify-content:center;
 }
 
-.cart-badge{
+.cart-badge {
   position:absolute;
   top:-8px;
   right:-10px;
-  background:#ff3e3e;
-  color:white;
+  background: var(--color-pink);
+  color: var(--color-white);
   font-size:10px;
   padding:2px 6px;
   border-radius:10px;
   font-weight:bold;
+  box-shadow: 0 2px 8px var(--color-pink-glow);
 }
 
 .cart-overlay{
@@ -234,9 +259,9 @@ nav a:hover{
   right:0;
 }
 
-.cart-header{
+.cart-header {
   padding:20px;
-  border-bottom:1px solid #eee;
+  border-bottom: 1px solid var(--color-border);
   display:flex;
   justify-content:space-between;
   align-items:center;
@@ -310,9 +335,9 @@ nav a:hover{
     color:#cc0000;
 }
 
-.cart-footer{
+.cart-footer {
   padding:20px;
-  border-top:1px solid #eee;
+  border-top: 1px solid var(--color-border); background: var(--color-black);
 }
 
 .cart-total{
@@ -322,20 +347,23 @@ nav a:hover{
   margin-bottom:15px;
 }
 
-.btn-checkout{
+.btn-checkout {
   width:100%;
   padding:14px;
   border:none;
-  background:black;
-  color:white;
+  background: var(--color-pink);
+  color: var(--color-white);
   cursor:pointer;
   border-radius:8px;
   font-size:15px;
   transition:.3s;
+  box-shadow: 0 4px 14px var(--color-pink-glow);
 }
 
-.btn-checkout:hover{
-  background:#333;
+.btn-checkout:hover {
+  background: var(--color-pink-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 47, 120, 0.4);
 }
 
 /* PORTADA HERO */
@@ -614,23 +642,25 @@ nav a:hover{
 
 
 
-.card{
-  background:white;
+.card {
+  background: var(--color-white);
   border-radius:16px;
   overflow:hidden;
   transition:all .4s ease;
-  border:1px solid rgba(0,0,0,0.04);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 18px var(--color-shadow);
   display:flex;
   flex-direction:column;
 }
 
-.card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 15px 35px rgba(0,0,0,.1);
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px var(--color-shadow-hover);
+  border-color: var(--color-gold-subtle);
 }
 
-.card img{
+.card img {
+  background: var(--color-ivory);
   width:100%;
   height:230px;
   object-fit:cover;
@@ -648,31 +678,31 @@ nav a:hover{
   flex:1;
 }
 
-.info h3{
+.info h3 {
   margin:0;
   font-family: 'Outfit', sans-serif;
   font-size:15px;
   font-weight:600;
-  color:#111;
+  color: var(--color-black);
   line-height:1.4;
   text-transform: capitalize;
   letter-spacing: 0.3px;
 }
 
-.price{
+.price {
   margin:6px 0 10px;
   font-family: 'Outfit', sans-serif;
   font-weight:700;
   font-size:17px;
-  color:#222;
+  color: var(--color-black); font-size: 18px; font-weight: 700;
 }
 
-.btn-add{
+.btn-add {
   width:100%;
   padding:12px;
   border:none;
-  background:#111;
-  color:white;
+  background: var(--color-pink);
+  color: var(--color-white);
   cursor:pointer;
   font-family: 'Outfit', sans-serif;
   font-size:13px;
@@ -682,12 +712,13 @@ nav a:hover{
   border-radius:8px;
   margin-top:auto;
   transition:.3s;
+  box-shadow: 0 4px 14px var(--color-pink-glow);
 }
 
-.btn-add:hover{
-  background:#e63946;
-  transform:translateY(-2px);
-  box-shadow:0 5px 15px rgba(230,57,70,0.4);
+.btn-add:hover {
+  background: var(--color-pink-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 47, 120, 0.4);
 }
 
 /* FLOATING WA & FOOTER */
@@ -744,7 +775,7 @@ footer h2 {
 footer p {
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
-  color: #aaa;
+  color: var(--color-gold); font-style: italic;
   margin: 0 0 20px 0;
 }
 
@@ -765,7 +796,7 @@ footer p {
 }
 
 .footer-links a:hover {
-  color: #e63946;
+  color: var(--color-gold);
 }
 
 .footer-copy {
@@ -966,7 +997,7 @@ footer p {
 .floating-socials .facebook { background: #1877F2; }
 .floating-socials .instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .floating-socials .tiktok   { background: #010101; }
-.floating-socials .email-btn { background: #d44638; }
+.floating-socials .email-btn { background: var(--color-pink); }
 
 /* Hover: se expande y muestra el nombre */
 .floating-socials a:hover {
@@ -976,7 +1007,7 @@ footer p {
 .floating-socials .facebook:hover { background: #1056c0; }
 .floating-socials .instagram:hover { filter: brightness(0.85); }
 .floating-socials .tiktok:hover   { background: #333; }
-.floating-socials .email-btn:hover { background: #b23121; }
+.floating-socials .email-btn:hover { background: var(--color-pink-hover); }
 
 .floating-socials a svg {
   pointer-events: none;
