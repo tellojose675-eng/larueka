@@ -343,21 +343,20 @@ nav a:hover{
 .hero-portada {
   width: 100%;
   max-width: 1200px;
-  margin: 20px auto;
+  margin: 20px auto 35px;
   display: block;
   line-height: 0;
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  background: #fdf5f5;
 }
 
 .hero-portada img {
   width: 100%;
-  max-height: 500px;
   height: auto;
   display: block;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
 }
 
 /* Separador vertical central */
@@ -577,22 +576,28 @@ nav a:hover{
   .hero-portada {
     padding: 0;
     width: 100%;
-    margin: 0;
+    margin: 10px 0 20px;
     border-radius: 0;
+    box-shadow: none;
+  }
+  .hero-portada img {
+    width: 100%;
+    height: auto;
+    display: block;
   }
 }
 
 @media(max-width: 500px) {
   .hero-portada {
     width: 100%;
-    margin: 0;
+    margin: 0 0 15px;
     border-radius: 0;
+    box-shadow: none;
   }
   .hero-portada img {
     width: 100%;
     height: auto;
-    object-fit: contain;
-    object-position: center;
+    display: block;
   }
 }
 
@@ -1147,7 +1152,7 @@ footer p {
 
 <!-- PORTADA HERO -->
 <section class="hero-portada">
-  <img src="portada.png.png" alt="Angel Rosa - Estilo que te representa">
+  <img src="banner_angelrosa.png" alt="Angel Rosa - Moda que resalta tu esencia">
 </section>
 
 
