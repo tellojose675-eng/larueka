@@ -446,7 +446,7 @@ async function sendReclamoEmail(reclamo) {
   const port = process.env.SMTP_PORT || 587;
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  const toEmail = process.env.NOTIFICATION_EMAIL || "laruekaperu@gmail.com";
+  const toEmail = process.env.NOTIFICATION_EMAIL || "angelrosaperu.ofi@gmail.com";
 
   if (!host || !user || !pass) {
     console.log("⚠️ SMTP no está completamente configurado (SMTP_HOST, SMTP_USER, SMTP_PASS). Se omite el envío del correo de notificación.");
