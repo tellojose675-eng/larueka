@@ -31,7 +31,16 @@ app.use(express.urlencoded({
   extended: true
 }));
 
-app.use(express.static(path.join(__dirname, "public"), { extensions: ['html'] }));
+app.use(express.static(path.join(__dirname, "public"), {
+  extensions: ['html'],
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+    }
+  }
+}));
 
 // =========================
 // POSTGRESQL
